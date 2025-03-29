@@ -1,0 +1,622 @@
+<!doctype html><html amp lang="en-gb"><head><meta charset="utf-8"><title>How to Create and Apply Django Migrations - Python</title><meta name="description" content="If you're working with Django, you're building web applications backed by databases. As your application evolves, your data models (models.py) will inevitably change: you'll add new fields, remove old ones, rename tables, or add relationships. How do you ensure your database schema stays perfectly in&hellip;"><link rel="canonical" href="https://monooa.github.io/dev/python/how-to-create-and-apply-django-migrations.html"><meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet" type="text/css"><script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script><script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script><script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script><script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://monooa.github.io/dev/python/amp/how-to-create-and-apply-django-migrations.html"},"headline":"How to Create and Apply Django Migrations","datePublished":"2025-03-29T16:06","dateModified":"2025-03-29T16:06","description":"If you're working with Django, you're building web applications backed by databases. As your application evolves, your data models (models.py) will inevitably change: you'll add new fields, remove old ones, rename tables, or add relationships. How do you ensure your database schema stays perfectly in&hellip;","author":{"@type":"Person","name":"aymen","url":"https://monooa.github.io/dev/python/amp/authors/aymen/"},"publisher":{"@type":"Organization","name":"aymen"}}</script><style amp-custom>article,
+aside,
+footer,
+header,
+hgroup,
+main,
+nav,
+section {
+  display: block; }
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0; }
+
+li {
+  list-style: none; }
+
+amp-img {
+  max-width: 100%; }
+
+button,
+input,
+select,
+textarea {
+  font: inherit; }
+
+html {
+  font-size: 1rem; }
+
+body {
+  background: #f1f1f1;
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.6; }
+
+a {
+  color:  #039be5;
+  text-decoration: none;
+  -webkit-transition: all 0.12s linear 0s;
+  -o-transition: all 0.12s linear 0s;
+  transition: all 0.12s linear 0s; }
+
+a:hover {
+  color: #262626;
+  text-decoration: underline;
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip: ink; }
+
+a:active {
+  color: #262626; }
+
+a:focus {
+  outline: 2px dotted #039be5; }
+
+figure,
+blockquote,
+p,
+ul,
+ol,
+dl,
+table,
+hr,
+fieldset {
+  margin-top: 1.6rem; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 2.13333rem; }
+
+h1 {
+  font-size: 1.67583rem;
+  font-weight: normal; }
+
+h2 {
+  font-size: 1.4729rem; }
+
+h3 {
+  font-size: 1.29454rem; }
+
+h4 {
+  font-size: 1.13778rem; }
+
+h5 {
+  font-size: 1rem; }
+
+h6 {
+  font-size: 0.87891rem; }
+
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+  margin-top: 0.8rem; }
+
+b,
+strong {
+  font-weight: 600; }
+
+blockquote {
+  color: #6c7175;
+  font-family: "Droid Serif", "Times", "Source Serif Pro", serif;
+  font-style: italic;
+  padding: 1.33333rem 0.53333rem 1.33333rem 3.2rem;
+  position: relative; }
+  blockquote:before {
+    display: block;
+    content: "\201C";
+    font-size: 4.41226rem;
+    position: absolute;
+    left: 0;
+    top: -12px;
+    color: rgba(108, 113, 117, 0.5); }
+  blockquote > :nth-child(1) {
+    margin-top: 0; }
+
+ul,
+ol {
+  margin-left: 2rem; }
+  ul > li,
+  ol > li {
+    list-style: inherit;
+    padding: 0 0 0.26667rem 0.26667rem; }
+
+dl dt {
+  color: #262626;
+  font-weight: 600; }
+
+code,
+pre {
+  background-color: #f1f1f1;
+  font-family: monospace; }
+
+pre {
+  margin: 1.6rem 0 0;
+  padding: 1.6rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto; }
+  pre > code {
+    color: #262626;
+    padding: 0; }
+
+code {
+  border-radius: 3px;
+  color: #262626;
+  padding: 0.26667rem 0.53333rem; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #d4d4d4;
+  width: 100%;
+  overflow-x: auto;
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap; }
+  table th {
+    font-weight: 500;
+    padding: 0.53333rem 1.06667rem; }
+  table tr {
+    border-bottom: 1px solid #d4d4d4; }
+    table tr:nth-child(2n) {
+      background: #f1f1f1; }
+  table td {
+    padding: 0.53333rem 1.06667rem; }
+
+figcaption {
+  clear: both;
+  color: rgba(108, 113, 117, 0.6);
+  font-size: 0.82397rem;
+  margin: 0.8rem 0 0;
+  text-align: center; }
+
+sub,
+sup {
+  font-size: 65%; }
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+
+.btn, [type=button],
+[type=submit],
+button {
+  background: #039be5;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.87891rem;
+  font-weight: 500;
+  line-height: 1.9;
+  padding: 0.53333rem 1.33333rem;
+  text-align: center;
+  text-decoration: none;
+  -webkit-transition: all .15s ease;
+  -o-transition: all .15s ease;
+  transition: all .15s ease;
+  width: auto; }
+  .btn:hover, [type=button]:hover,
+  [type=submit]:hover,
+  button:hover {
+    background: #262626;
+    color: #ffffff; }
+  .btn:focus, [type=button]:focus,
+  [type=submit]:focus,
+  button:focus {
+    outline: none; }
+  .btn-outline {
+    border: 1px solid #ddd;
+    background: #ffffff;
+    border-radius: 3px;
+    color: #262626; }
+
+[type=button],
+[type=submit],
+button {
+  text-transform: uppercase;
+  -webkit-appearance: none;
+  -moz-appearance: none; }
+
+.navbar {
+  background: #039be5;
+  -webkit-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  line-height: 3;
+  max-height: 4rem; }
+  .navbar > div {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto; }
+  .navbar a {
+    color: #ffffff;
+    text-decoration: none; }
+  .navbar-sidebar-toggle {
+    left: 0;
+    position: relative;
+    text-indent: -99999rem; }
+    .navbar-sidebar-toggle:before {
+      content: "";
+      display: block;
+      border-top: 0.375rem double #ffffff;
+      border-bottom: 0.125rem solid #ffffff;
+      height: 0.125rem;
+      position: absolute;
+      text-indent: 0;
+      top: 50%;
+      width: 1.3rem;
+      -webkit-transform: translate(0px, -50%);
+      -ms-transform: translate(0px, -50%);
+      transform: translate(0px, -50%); }
+
+
+.logo {
+            display: inline-block;
+  font-weight: 600;
+  line-height: 1;
+            margin: 0 auto;
+            height: 2rem;
+            text-indent: -9999px;
+            width: 240px;vertical-align: middle;
+        }
+        .logo.logo-text {
+            line-height: 2;
+            text-align: center;
+            text-indent: 0;
+        }
+
+amp-sidebar {
+  background: #ffffff;
+  width: 240px; }
+  amp-sidebar > ul {
+    margin: 0.8rem 0 0;
+    padding: 0; }
+    amp-sidebar > ul ul {
+      border-left: 1px solid #d4d4d4;
+      margin: 0.53333rem 0 0; }
+    amp-sidebar > ul li {
+      color: #262626;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      list-style: none;
+      line-height: 1.4;
+      padding: 0.42667rem 1.06667rem; }
+      amp-sidebar > ul li li {
+        font-weight: normal;
+        padding: 0.26667rem 0 0.26667rem 1.06667rem; }
+    amp-sidebar > ul a,
+    amp-sidebar > ul a:visited {
+      color: #262626; }
+
+.bg-white {
+  background: #ffffff; }
+
+.wrap-page {
+  max-width: 700px;
+  margin: 0 auto; }
+
+@media all and (max-width: 43.6875em) {
+  .wrap-inner {
+    padding: 0 6%; } }
+
+.page-title {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding: 1.6rem 6%; }
+  .page-title > h1 {
+    margin: 0;
+    font-size: 1.29454rem; }
+  .page-title > p {
+    font-size: 0.87891rem;
+    color: #6c7175;
+    line-height: 1.3;
+    margin: 0.26667rem 0 0; }
+  .page-title-author {
+    border-radius: 50%;
+    float: left;
+    height: 2.5rem;
+    width: 2.5rem; }
+    .page-title-author + h1 {
+      margin-left: 3.5rem; }
+      .page-title-author + h1 + p {
+        margin-left: 3.5rem; }
+
+.card {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding-bottom: 1.06667rem; }
+
+  .card-meta {
+    border-top: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-top: 1.06667rem;
+    text-transform: uppercase; }
+    .card-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .card-text {
+    font-size: 0.9375rem;
+    overflow: hidden;
+    padding: 0 6%; }
+    .card-text h2 {
+      font-size: 1.13778rem; }
+
+.post {
+  margin-bottom: 2.13333rem; }
+  .post-featured-image {
+    margin-top: 0;
+    position: relative; }
+    .post-featured-image > figcaption {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 3px;
+      color: #ffffff;
+      position: absolute;
+      bottom: 0.8rem;
+      padding: 0 0.26667rem;
+      right: 6%; }
+  .post-header {
+    margin-bottom: 2.13333rem; }
+  .post-meta {
+    border-bottom: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-bottom: 1.06667rem;
+    text-transform: uppercase; }
+    .post-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .post-tag {
+    margin: 0; }
+    .post-tag > li {
+      display: inline-block;
+      padding: 0; }
+      .post-tag > li a {
+        background: #f1f1f1;
+        border-radius: 2px;
+        color: #6c7175;
+        font-size: 0.77248rem;
+        display: inline-block;
+        margin: 0 0.26667rem 0.26667rem 0;
+        padding: 0.26667rem 0.53333rem; }
+        .post-tag > li a:hover {
+          background: #039be5;
+          color: #ffffff;
+          text-decoration: none; }
+  .post-share {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-top: 1.6rem;
+    width: 100%; }
+    .post-share amp-social-share {
+      -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+      flex: 1 0 auto;
+      background-size: 24px; }
+  .post-scroll {
+    color: #ffffff;
+    background: #039be5;
+    bottom: 10px;
+    border-radius: 50%;
+    border: none;
+    -webkit-box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    font-size: 1.13778rem;
+    height: 46px;
+    opacity: 0;
+    outline: none;
+    position: fixed;
+    padding: 0;
+    right: 4%;
+    visibility: hidden;
+    width: 46px;
+    z-index: 9999; }
+    .post-scroll-marker {
+      height: 0px;
+      position: absolute;
+      top: 100px;
+      width: 0px; }
+        .post-pagination {
+    background: #f1f1f1;
+    -webkit-box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    border-top: 1px solid #d4d4d4;
+    padding: 1.06667rem 0; }
+    .post-pagination > div {
+      line-height: 1.2;
+      padding: 0.53333rem 1.06667rem;
+      text-align: center; }
+      .post-pagination > div span {
+        display: block;
+        color: #6c7175;
+        font-size: 0.7242rem;
+        font-weight: 500;
+        margin-bottom: 0.26667rem;
+        text-transform: uppercase; }
+    .post-pagination-prev a:before {
+      content: "\2190";
+      margin-right: 0.26667rem; }
+    .post-pagination-next a:after {
+      content: "\2192";
+      margin-left: 0.26667rem; }
+
+aside {
+  margin: 1.6rem 0 0; }
+
+.align-left {
+  text-align: left; }
+
+.align-right {
+  text-align: right; }
+
+.align-center {
+  text-align: center; }
+
+.align-justify {
+  text-align: justify; }
+
+.msg {
+  border-left: 2px solid transparent;
+  padding: 1.06667rem 1.06667rem; }
+  .msg--highlight {
+    background-color: #fff8e6;
+    border-color: #e2ac4f; }
+  .msg--info {
+    background: rgba(45, 97, 201, 0.03);
+    border-color: #039be5; }
+  .msg--success {
+    background: #f7fbf6;
+    border-color: #5ab44b; }
+  .msg--warning {
+    background: #fff3f3;
+    border-color: #c06367;
+    color: #a94442; }
+
+.dropcap:first-letter {
+  float: left;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 2.16943rem;
+  line-height: 0.7;
+  margin-right: 0.53333rem;
+  padding: 0.53333rem 0.53333rem 0.53333rem 0; }
+
+.pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin: 0.8rem 0; }
+  .pagination > a {
+    padding-left: 0;
+    padding-right: 0;
+    width: 49%; }
+  .pagination-right {
+    margin-left: auto; }
+
+.bottom {
+  background: #039be5;
+  color: #ffffff;
+  padding: 1.06667rem 4%;
+  text-align: center; }</style><style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript><script async src="https://cdn.ampproject.org/v0.js"></script><script custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js" async></script><script custom-element="amp-position-observer" src="https://cdn.ampproject.org/v0/amp-position-observer-0.1.js" async></script></head><body class="bg-white"><nav class="navbar wrap-inner" id="top"><div><a on="tap:navbar-sidebar.toggle" class="navbar-sidebar-toggle" title="Menu">Menu</a> <a class="logo logo-text" href="https://monooa.github.io/dev/python/amp/">Python</a></div></nav><main class="wrap-page"><article class="post"><div class="wrap-inner"><header class="post-header"><h1>How to Create and Apply Django Migrations</h1><p class="post-meta">[MISSING TRANSLATION] <a href="https://monooa.github.io/dev/python/amp/authors/aymen/" rel="nofollow" title="aymen">aymen</a> <time datetime="2025-03-29T16:06">March 29, 2025</time></p></header><p>If you're working with Django, you're building web applications backed by databases. As your application evolves, your data models (<code>models.py</code>) will inevitably change: you'll add new fields, remove old ones, rename tables, or add relationships. How do you ensure your database schema stays perfectly in sync with your Django models without manually writing complex SQL scripts every time?</p><p>Enter <strong>Django Migrations</strong>. They are Django's powerful, built-in system for managing changes to your database schema over time. Think of them as version control for your database structure, tightly integrated with your Django project.</p><p>This post will guide you through the essentials of creating and applying migrations in your Django projects.</p><h3 id="why-do-we-need-migrations-">Why Do We Need Migrations?</h3><p>Imagine the alternative:</p><ol><li>You change a model in <code>models.py</code>.</li><li>You figure out the <em>exact</em> SQL <code>ALTER TABLE</code> statement needed for your specific database (PostgreSQL, MySQL, SQLite, etc.).</li><li>You manually connect to the database and run the SQL.</li><li>You tell every other developer on your team (and your deployment server) to do the <em>exact</em> same thing.</li></ol><p>This process is tedious, error-prone, database-specific, and incredibly difficult to manage, especially in teams or across different environments (development, staging, production).</p><p>Django migrations solve this by:</p><ul><li><strong>Automating</strong> the generation of schema changes based on your model definitions.</li><li>Providing a <strong>database-agnostic</strong> way to describe these changes (Django handles the SQL specifics).</li><li>Creating <strong>versioned files</strong> that can be tracked in your version control system (like Git).</li><li>Offering simple commands to <strong>apply</strong> or <strong>revert</strong> these changes consistently.</li></ul><h3 id="the-core-commands-makemigrations-and-migrate-">The Core Commands: <code>makemigrations</code> and <code>migrate</code></h3><p>The migration workflow primarily revolves around two <code>manage.py</code> commands:</p><ol><li><code>python manage.py makemigrations</code></li><li><code>python manage.py migrate</code></li></ol><p>Let's break them down.</p><h4 id="1-makemigrations-generating-the-blueprint">1. <code>makemigrations</code>: Generating the Blueprint</h4><ul><li><strong>What it does:</strong> This command inspects your <code>models.py</code> files for any changes since the last migration was created (or since the beginning, if it's the first time). If it detects changes (like adding a field, deleting a model, altering options), it generates a new <strong>migration file</strong> inside the <code>migrations/</code> directory of the relevant app.</li><li><strong>Think of it as:</strong> Creating a <em>plan</em> or <em>blueprint</em> for the changes needed. It doesn't touch the database itself.</li><li><p><strong>How to use it:</strong></p><pre><code class="lang-bash"># Detect <span class="hljs-keyword">changes</span> in ALL apps <span class="hljs-built_in">and</span> create migration <span class="hljs-keyword">files</span> <span class="hljs-keyword">if</span> needed
+<span class="hljs-keyword">python</span> manage.<span class="hljs-keyword">py</span> makemigrations
+
+# Detect <span class="hljs-keyword">changes</span> <span class="hljs-keyword">only</span> in <span class="hljs-keyword">a</span> specific app
+<span class="hljs-keyword">python</span> manage.<span class="hljs-keyword">py</span> makemigrations your_app_name
+</code></pre></li><li><strong>What you get:</strong> A new Python file (e.g., <code>your_app_name/migrations/0002_auto_....py</code>). This file contains Python code describing the operations needed to alter the database schema (like <code>migrations.AddField</code>, <code>migrations.CreateModel</code>, etc.). <strong>Crucially, you should commit these generated migration files to your version control system (Git).</strong></li></ul><h4 id="2-migrate-applying-the-changes-to-the-database">2. <code>migrate</code>: Applying the Changes to the Database</h4><ul><li><strong>What it does:</strong> This command looks for any migration files that haven't yet been applied to the database and executes them in the correct order. It talks to your configured database and runs the necessary SQL commands based on the instructions in the migration files.</li><li><strong>Think of it as:</strong> Executing the <em>plan</em> created by <code>makemigrations</code> against the actual database.</li><li><strong>How Django knows what's applied:</strong> Django maintains a special table in your database (usually named <code>django_migrations</code>) that tracks which migrations have already been run.</li><li><p><strong>How to use it:</strong></p><pre><code class="lang-bash"># Apply <span class="hljs-keyword">all</span> pending migrations <span class="hljs-keyword">for</span> <span class="hljs-keyword">all</span> apps
+<span class="hljs-keyword">python</span> manage.<span class="hljs-keyword">py</span> migrate
+
+# Apply pending migrations <span class="hljs-keyword">only</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">a</span> specific app
+<span class="hljs-keyword">python</span> manage.<span class="hljs-keyword">py</span> migrate your_app_name
+
+# Apply migrations <span class="hljs-keyword">up</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">a</span> specific one (can also <span class="hljs-keyword">be</span> used <span class="hljs-keyword">to</span> revert)
+<span class="hljs-keyword">python</span> manage.<span class="hljs-keyword">py</span> migrate your_app_name <span class="hljs-number">0001</span>_initial
+</code></pre></li></ul><h3 id="a-typical-workflow-example">A Typical Workflow Example</h3><p>Let's walk through a common scenario:</p><ol><li><p><strong>Define Your Initial Model:</strong> You create a new app (<code>blog</code>) and define your first model in <code>blog/models.py</code>:</p><pre><code class="lang-python"><span class="hljs-meta"># blog/models.py</span>
+<span class="hljs-title">from</span> django.db <span class="hljs-keyword">import</span> models
+<span class="hljs-class">
+<span class="hljs-keyword">class</span> <span class="hljs-type">Post</span>(<span class="hljs-title">models</span>.<span class="hljs-type">Model</span>):
+    title = models.<span class="hljs-type">CharField</span>(<span class="hljs-title">max_length</span>=200)
+    content = models.<span class="hljs-type">TextField</span>()
+    published_date = models.<span class="hljs-type">DateTimeField</span>(<span class="hljs-title">auto_now_add</span>=<span class="hljs-type">True</span>)
+
+    def __str__(<span class="hljs-title">self</span>):
+        return self.title</span>
+</code></pre></li><li><p><strong>Create the Initial Migration:</strong> Run <code>makemigrations</code>.</p><pre><code class="lang-bash">python manage<span class="hljs-selector-class">.py</span> makemigrations blog
+</code></pre><p>Django will detect the new <code>Post</code> model and create <code>blog/migrations/0001_initial.py</code>.</p></li><li><p><strong>Apply the Migration:</strong> Run <code>migrate</code> to create the <code>blog_post</code> table in your database.</p><pre><code class="lang-bash">python manage<span class="hljs-selector-class">.py</span> migrate
+</code></pre><p>Your database now matches your model definition.</p></li><li><p><strong>Modify Your Model:</strong> You decide to add an author field.</p><pre><code class="lang-python"><span class="hljs-meta"># blog/models.py</span>
+<span class="hljs-title">from</span> django.db <span class="hljs-keyword">import</span> models
+<span class="hljs-title">from</span> django.contrib.auth.models <span class="hljs-keyword">import</span> User # Import User
+<span class="hljs-class">
+<span class="hljs-keyword">class</span> <span class="hljs-type">Post</span>(<span class="hljs-title">models</span>.<span class="hljs-type">Model</span>):
+    title = models.<span class="hljs-type">CharField</span>(<span class="hljs-title">max_length</span>=200)
+    content = models.<span class="hljs-type">TextField</span>()
+    published_date = models.<span class="hljs-type">DateTimeField</span>(<span class="hljs-title">auto_now_add</span>=<span class="hljs-type">True</span>)
+    author = models.<span class="hljs-type">ForeignKey</span>(<span class="hljs-type">User</span>, <span class="hljs-title">on_delete</span>=<span class="hljs-title">models</span>.<span class="hljs-type">CASCADE</span>, <span class="hljs-title">null</span>=<span class="hljs-type">True</span>) # <span class="hljs-type">Added</span> field
+
+    def __str__(<span class="hljs-title">self</span>):
+        return self.title</span>
+</code></pre><p><em>(Note: We added <code>null=True</code> here. If adding a non-nullable field to a table with existing rows, Django will prompt you during <code>makemigrations</code> for a default value.)</em></p></li><li><p><strong>Create the New Migration:</strong> Run <code>makemigrations</code> again.</p><pre><code class="lang-bash">python manage<span class="hljs-selector-class">.py</span> makemigrations blog
+</code></pre><p>Django detects the new <code>author</code> field and creates <code>blog/migrations/0002_post_author.py</code> (or similar).</p></li><li><p><strong>Apply the New Migration:</strong> Run <code>migrate</code> again.</p><pre><code class="lang-bash">python manage<span class="hljs-selector-class">.py</span> migrate
+</code></pre><p>Django finds the unapplied <code>0002</code> migration and runs the necessary <code>ALTER TABLE</code> command to add the <code>author_id</code> column to your <code>blog_post</code> table.</p></li></ol><h3 id="inspecting-migration-status">Inspecting Migration Status</h3><p>Sometimes you need to see which migrations exist and which have been applied.</p><pre><code class="lang-bash">python manage<span class="hljs-selector-class">.py</span> showmigrations
+</code></pre><p>This command lists all apps with migrations and marks applied ones with <code>[X]</code>. It's useful for debugging and understanding the current state.</p><h3 id="best-practices">Best Practices</h3><ul><li><strong>Always run <code>makemigrations</code></strong> after changing your <code>models.py</code>.</li><li><strong>Always commit generated migration files</strong> to your version control (Git). They are part of your codebase!</li><li><strong>Run <code>migrate</code></strong> during deployment or after pulling changes from collaborators that include new migration files.</li><li><strong>Avoid manually editing</strong> migration files unless you know exactly what you're doing (e.g., for data migrations or complex schema operations not automatically detected).</li><li><strong>In teams:</strong> Always pull the latest code and run <code>migrate</code> <em>before</em> starting new model changes to avoid conflicts.</li></ul><h3 id="conclusion">Conclusion</h3><p>Django migrations are a fundamental part of developing robust Django applications. They take the pain out of database schema management, allowing you to focus on building features while ensuring your database structure evolves safely and consistently alongside your code. By mastering the <code>makemigrations</code> and <code>migrate</code> workflow, you streamline development, improve collaboration, and make deployments significantly less stressful. Happy migrating!</p><p> </p><aside><div class="post-share"><amp-social-share type="system" width="40" height="40" data-param-text="How to Create and Apply Django Migrations"></amp-social-share><amp-social-share type="facebook" width="40" height="40" data-param-app_id="" data-param-text="How to Create and Apply Django Migrations" data-param-href="https://monooa.github.io/dev/python/amp/how-to-create-and-apply-django-migrations.html"></amp-social-share><amp-social-share type="twitter" width="40" height="40" data-param-text="How to Create and Apply Django Migrations" data-param-url="https://monooa.github.io/dev/python/amp/how-to-create-and-apply-django-migrations.html"></amp-social-share><amp-social-share type="pinterest" width="40" height="40" data-param-url="https://monooa.github.io/dev/python/amp/how-to-create-and-apply-django-migrations.html"></amp-social-share><amp-social-share type="tumblr" width="40" height="40" data-param-text="How to Create and Apply Django Migrations" data-param-url="https://monooa.github.io/dev/python/amp/how-to-create-and-apply-django-migrations.html"></amp-social-share><amp-social-share type="whatsapp" width="40" height="40" data-param-text="How to Create and Apply Django Migrations" data-param-url="https://monooa.github.io/dev/python/amp/how-to-create-and-apply-django-migrations.html"></amp-social-share></div></aside></div></article></main><amp-animation id="showAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "1",
+                            "visibility": "visible",
+                            "transform": "scale(1)"
+                        }]
+                    }]
+                }</script></amp-animation><amp-animation id="hideAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "0",
+                            "visibility": "hidden",
+                            "transform": "scale(0.1)"
+                        }]
+                    }]
+                }</script></amp-animation><div class="post-scroll-marker"><amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer></div><button class="post-scroll" on="tap:top.scrollTo(duration=200)">&#8593;</button><footer class="bottom">Powered by Publii</footer><amp-sidebar id="navbar-sidebar" layout="nodisplay"><ul></ul></amp-sidebar></body></html>
