@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
     <title>Python</title>
-    <link href="https://monooa.github.io/dev/python/feed.xml" rel="self" />
-    <link href="https://monooa.github.io/dev/python" />
+    <link href="https://monooa.github.io/dev/python-files/feed.xml" rel="self" />
+    <link href="https://monooa.github.io/dev/python-files" />
     <updated>2025-03-29T16:40:13+01:00</updated>
     <author>
         <name>aymen</name>
     </author>
-    <id>https://monooa.github.io/dev/python</id>
+    <id>https://monooa.github.io/dev/python-files</id>
 
     <entry>
         <title>How to Connect Django to MySQL</title>
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-connect-django-to-mysql.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-connect-django-to-mysql.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-connect-django-to-mysql.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-connect-django-to-mysql.html</id>
 
         <updated>2025-03-29T16:40:13+01:00</updated>
             <summary>
@@ -188,8 +188,8 @@ python manage.py migrate
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-use-django-with-sqlite-database.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-use-django-with-sqlite-database.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-use-django-with-sqlite-database.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-use-django-with-sqlite-database.html</id>
 
         <updated>2025-03-29T16:37:38+01:00</updated>
             <summary>
@@ -307,8 +307,8 @@ DATABASES = {
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-implement-django-celery-for-background-tasks.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-implement-django-celery-for-background-tasks.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-implement-django-celery-for-background-tasks.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-implement-django-celery-for-background-tasks.html</id>
 
         <updated>2025-03-29T16:35:32+01:00</updated>
             <summary>
@@ -541,8 +541,8 @@ __all__ = (<span class="hljs-string">'celery_app'</span>,)
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-use-django-signals.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-use-django-signals.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-use-django-signals.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-use-django-signals.html</id>
 
         <updated>2025-03-29T16:33:17+01:00</updated>
             <summary>
@@ -727,8 +727,8 @@ import django.<span class="hljs-keyword">dispatch
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-create-custom-django-user-models.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-create-custom-django-user-models.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-create-custom-django-user-models.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-create-custom-django-user-models.html</id>
 
         <updated>2025-03-29T16:31:28+01:00</updated>
             <summary>
@@ -928,8 +928,8 @@ user_instance = <span class="hljs-keyword">User</span>.objects.get(email=<span c
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-handle-user-authentication-in-django.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-handle-user-authentication-in-django.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-handle-user-authentication-in-django.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-handle-user-authentication-in-django.html</id>
 
         <updated>2025-03-29T16:27:13+01:00</updated>
             <summary>
@@ -1131,8 +1131,8 @@ urlpatterns = [
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-use-django-middleware.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-use-django-middleware.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-use-django-middleware.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-use-django-middleware.html</id>
 
         <updated>2025-03-29T16:25:16+01:00</updated>
             <summary>
@@ -1304,8 +1304,8 @@ from django.utils.deprecation import MiddlewareMixin <span class="hljs-comment">
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-implement-django-function-based-views.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-implement-django-function-based-views.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-implement-django-function-based-views.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-implement-django-function-based-views.html</id>
 
         <updated>2025-03-29T16:23:33+01:00</updated>
             <summary>
@@ -1502,8 +1502,8 @@ urlpatterns = [
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-create-django-class-based-views.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-create-django-class-based-views.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-create-django-class-based-views.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-create-django-class-based-views.html</id>
 
         <updated>2025-03-29T16:21:28+01:00</updated>
             <summary>
@@ -1688,8 +1688,8 @@ urlpatterns = [
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/dev/python/how-to-work-with-django-urls.html"/>
-        <id>https://monooa.github.io/dev/python/how-to-work-with-django-urls.html</id>
+        <link href="https://monooa.github.io/dev/python-files/how-to-work-with-django-urls.html"/>
+        <id>https://monooa.github.io/dev/python-files/how-to-work-with-django-urls.html</id>
 
         <updated>2025-03-29T16:19:38+01:00</updated>
             <summary>
