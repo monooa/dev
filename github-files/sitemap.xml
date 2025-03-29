@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://monooa.github.io/ar/github/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url>
+<loc>https://monooa.github.io/ar/github/</loc>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/branching-and-merging-github/</loc>
+<lastmod>2025-03-27T15:50:10+01:00</lastmod>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/collaboration-issues-prs-discussions-projects-github/</loc>
+<lastmod>2025-03-27T15:51:35+01:00</lastmod>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/getting-started-and-core-concepts-git-and-github-github/</loc>
+<lastmod>2025-03-27T15:47:19+01:00</lastmod>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/ggggg/</loc>
+<lastmod>2025-03-27T15:37:11+01:00</lastmod>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/github-actions-cicd-and-automation-github/</loc>
+<lastmod>2025-03-27T15:53:00+01:00</lastmod>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/github-packages-and-container-registry-github/</loc>
+<lastmod>2025-03-27T15:55:51+01:00</lastmod>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/github-security-features-github/</loc>
+<lastmod>2025-03-27T15:54:26+01:00</lastmod>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/page/2/</loc>
+</url>
+<url>
+<loc>https://monooa.github.io/ar/github/repositories-and-management-github/</loc>
+<lastmod>2025-03-27T15:48:44+01:00</lastmod>
+</url>
+</urlset>
