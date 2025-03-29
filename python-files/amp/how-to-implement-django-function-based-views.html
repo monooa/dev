@@ -1,0 +1,679 @@
+<!doctype html><html amp lang="en-gb"><head><meta charset="utf-8"><title>How to Implement Django Function-Based Views - Python</title><meta name="description" content="Django, the high-level Python web framework, encourages rapid development and clean, pragmatic design. One of the fundamental building blocks of any Django application is the view. Views are responsible for processing incoming web requests and returning web responses. Django offers two primary ways to write views:&hellip;"><link rel="canonical" href="https://monooa.github.io/dev/python/how-to-implement-django-function-based-views.html"><meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet" type="text/css"><script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script><script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script><script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script><script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://monooa.github.io/dev/python/amp/how-to-implement-django-function-based-views.html"},"headline":"How to Implement Django Function-Based Views","datePublished":"2025-03-29T16:23","dateModified":"2025-03-29T16:23","description":"Django, the high-level Python web framework, encourages rapid development and clean, pragmatic design. One of the fundamental building blocks of any Django application is the view. Views are responsible for processing incoming web requests and returning web responses. Django offers two primary ways to write views:&hellip;","author":{"@type":"Person","name":"aymen","url":"https://monooa.github.io/dev/python/amp/authors/aymen/"},"publisher":{"@type":"Organization","name":"aymen"}}</script><style amp-custom>article,
+aside,
+footer,
+header,
+hgroup,
+main,
+nav,
+section {
+  display: block; }
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0; }
+
+li {
+  list-style: none; }
+
+amp-img {
+  max-width: 100%; }
+
+button,
+input,
+select,
+textarea {
+  font: inherit; }
+
+html {
+  font-size: 1rem; }
+
+body {
+  background: #f1f1f1;
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.6; }
+
+a {
+  color:  #039be5;
+  text-decoration: none;
+  -webkit-transition: all 0.12s linear 0s;
+  -o-transition: all 0.12s linear 0s;
+  transition: all 0.12s linear 0s; }
+
+a:hover {
+  color: #262626;
+  text-decoration: underline;
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip: ink; }
+
+a:active {
+  color: #262626; }
+
+a:focus {
+  outline: 2px dotted #039be5; }
+
+figure,
+blockquote,
+p,
+ul,
+ol,
+dl,
+table,
+hr,
+fieldset {
+  margin-top: 1.6rem; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 2.13333rem; }
+
+h1 {
+  font-size: 1.67583rem;
+  font-weight: normal; }
+
+h2 {
+  font-size: 1.4729rem; }
+
+h3 {
+  font-size: 1.29454rem; }
+
+h4 {
+  font-size: 1.13778rem; }
+
+h5 {
+  font-size: 1rem; }
+
+h6 {
+  font-size: 0.87891rem; }
+
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+  margin-top: 0.8rem; }
+
+b,
+strong {
+  font-weight: 600; }
+
+blockquote {
+  color: #6c7175;
+  font-family: "Droid Serif", "Times", "Source Serif Pro", serif;
+  font-style: italic;
+  padding: 1.33333rem 0.53333rem 1.33333rem 3.2rem;
+  position: relative; }
+  blockquote:before {
+    display: block;
+    content: "\201C";
+    font-size: 4.41226rem;
+    position: absolute;
+    left: 0;
+    top: -12px;
+    color: rgba(108, 113, 117, 0.5); }
+  blockquote > :nth-child(1) {
+    margin-top: 0; }
+
+ul,
+ol {
+  margin-left: 2rem; }
+  ul > li,
+  ol > li {
+    list-style: inherit;
+    padding: 0 0 0.26667rem 0.26667rem; }
+
+dl dt {
+  color: #262626;
+  font-weight: 600; }
+
+code,
+pre {
+  background-color: #f1f1f1;
+  font-family: monospace; }
+
+pre {
+  margin: 1.6rem 0 0;
+  padding: 1.6rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto; }
+  pre > code {
+    color: #262626;
+    padding: 0; }
+
+code {
+  border-radius: 3px;
+  color: #262626;
+  padding: 0.26667rem 0.53333rem; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #d4d4d4;
+  width: 100%;
+  overflow-x: auto;
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap; }
+  table th {
+    font-weight: 500;
+    padding: 0.53333rem 1.06667rem; }
+  table tr {
+    border-bottom: 1px solid #d4d4d4; }
+    table tr:nth-child(2n) {
+      background: #f1f1f1; }
+  table td {
+    padding: 0.53333rem 1.06667rem; }
+
+figcaption {
+  clear: both;
+  color: rgba(108, 113, 117, 0.6);
+  font-size: 0.82397rem;
+  margin: 0.8rem 0 0;
+  text-align: center; }
+
+sub,
+sup {
+  font-size: 65%; }
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+
+.btn, [type=button],
+[type=submit],
+button {
+  background: #039be5;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.87891rem;
+  font-weight: 500;
+  line-height: 1.9;
+  padding: 0.53333rem 1.33333rem;
+  text-align: center;
+  text-decoration: none;
+  -webkit-transition: all .15s ease;
+  -o-transition: all .15s ease;
+  transition: all .15s ease;
+  width: auto; }
+  .btn:hover, [type=button]:hover,
+  [type=submit]:hover,
+  button:hover {
+    background: #262626;
+    color: #ffffff; }
+  .btn:focus, [type=button]:focus,
+  [type=submit]:focus,
+  button:focus {
+    outline: none; }
+  .btn-outline {
+    border: 1px solid #ddd;
+    background: #ffffff;
+    border-radius: 3px;
+    color: #262626; }
+
+[type=button],
+[type=submit],
+button {
+  text-transform: uppercase;
+  -webkit-appearance: none;
+  -moz-appearance: none; }
+
+.navbar {
+  background: #039be5;
+  -webkit-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  line-height: 3;
+  max-height: 4rem; }
+  .navbar > div {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto; }
+  .navbar a {
+    color: #ffffff;
+    text-decoration: none; }
+  .navbar-sidebar-toggle {
+    left: 0;
+    position: relative;
+    text-indent: -99999rem; }
+    .navbar-sidebar-toggle:before {
+      content: "";
+      display: block;
+      border-top: 0.375rem double #ffffff;
+      border-bottom: 0.125rem solid #ffffff;
+      height: 0.125rem;
+      position: absolute;
+      text-indent: 0;
+      top: 50%;
+      width: 1.3rem;
+      -webkit-transform: translate(0px, -50%);
+      -ms-transform: translate(0px, -50%);
+      transform: translate(0px, -50%); }
+
+
+.logo {
+            display: inline-block;
+  font-weight: 600;
+  line-height: 1;
+            margin: 0 auto;
+            height: 2rem;
+            text-indent: -9999px;
+            width: 240px;vertical-align: middle;
+        }
+        .logo.logo-text {
+            line-height: 2;
+            text-align: center;
+            text-indent: 0;
+        }
+
+amp-sidebar {
+  background: #ffffff;
+  width: 240px; }
+  amp-sidebar > ul {
+    margin: 0.8rem 0 0;
+    padding: 0; }
+    amp-sidebar > ul ul {
+      border-left: 1px solid #d4d4d4;
+      margin: 0.53333rem 0 0; }
+    amp-sidebar > ul li {
+      color: #262626;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      list-style: none;
+      line-height: 1.4;
+      padding: 0.42667rem 1.06667rem; }
+      amp-sidebar > ul li li {
+        font-weight: normal;
+        padding: 0.26667rem 0 0.26667rem 1.06667rem; }
+    amp-sidebar > ul a,
+    amp-sidebar > ul a:visited {
+      color: #262626; }
+
+.bg-white {
+  background: #ffffff; }
+
+.wrap-page {
+  max-width: 700px;
+  margin: 0 auto; }
+
+@media all and (max-width: 43.6875em) {
+  .wrap-inner {
+    padding: 0 6%; } }
+
+.page-title {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding: 1.6rem 6%; }
+  .page-title > h1 {
+    margin: 0;
+    font-size: 1.29454rem; }
+  .page-title > p {
+    font-size: 0.87891rem;
+    color: #6c7175;
+    line-height: 1.3;
+    margin: 0.26667rem 0 0; }
+  .page-title-author {
+    border-radius: 50%;
+    float: left;
+    height: 2.5rem;
+    width: 2.5rem; }
+    .page-title-author + h1 {
+      margin-left: 3.5rem; }
+      .page-title-author + h1 + p {
+        margin-left: 3.5rem; }
+
+.card {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding-bottom: 1.06667rem; }
+
+  .card-meta {
+    border-top: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-top: 1.06667rem;
+    text-transform: uppercase; }
+    .card-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .card-text {
+    font-size: 0.9375rem;
+    overflow: hidden;
+    padding: 0 6%; }
+    .card-text h2 {
+      font-size: 1.13778rem; }
+
+.post {
+  margin-bottom: 2.13333rem; }
+  .post-featured-image {
+    margin-top: 0;
+    position: relative; }
+    .post-featured-image > figcaption {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 3px;
+      color: #ffffff;
+      position: absolute;
+      bottom: 0.8rem;
+      padding: 0 0.26667rem;
+      right: 6%; }
+  .post-header {
+    margin-bottom: 2.13333rem; }
+  .post-meta {
+    border-bottom: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-bottom: 1.06667rem;
+    text-transform: uppercase; }
+    .post-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .post-tag {
+    margin: 0; }
+    .post-tag > li {
+      display: inline-block;
+      padding: 0; }
+      .post-tag > li a {
+        background: #f1f1f1;
+        border-radius: 2px;
+        color: #6c7175;
+        font-size: 0.77248rem;
+        display: inline-block;
+        margin: 0 0.26667rem 0.26667rem 0;
+        padding: 0.26667rem 0.53333rem; }
+        .post-tag > li a:hover {
+          background: #039be5;
+          color: #ffffff;
+          text-decoration: none; }
+  .post-share {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-top: 1.6rem;
+    width: 100%; }
+    .post-share amp-social-share {
+      -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+      flex: 1 0 auto;
+      background-size: 24px; }
+  .post-scroll {
+    color: #ffffff;
+    background: #039be5;
+    bottom: 10px;
+    border-radius: 50%;
+    border: none;
+    -webkit-box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    font-size: 1.13778rem;
+    height: 46px;
+    opacity: 0;
+    outline: none;
+    position: fixed;
+    padding: 0;
+    right: 4%;
+    visibility: hidden;
+    width: 46px;
+    z-index: 9999; }
+    .post-scroll-marker {
+      height: 0px;
+      position: absolute;
+      top: 100px;
+      width: 0px; }
+        .post-pagination {
+    background: #f1f1f1;
+    -webkit-box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    border-top: 1px solid #d4d4d4;
+    padding: 1.06667rem 0; }
+    .post-pagination > div {
+      line-height: 1.2;
+      padding: 0.53333rem 1.06667rem;
+      text-align: center; }
+      .post-pagination > div span {
+        display: block;
+        color: #6c7175;
+        font-size: 0.7242rem;
+        font-weight: 500;
+        margin-bottom: 0.26667rem;
+        text-transform: uppercase; }
+    .post-pagination-prev a:before {
+      content: "\2190";
+      margin-right: 0.26667rem; }
+    .post-pagination-next a:after {
+      content: "\2192";
+      margin-left: 0.26667rem; }
+
+aside {
+  margin: 1.6rem 0 0; }
+
+.align-left {
+  text-align: left; }
+
+.align-right {
+  text-align: right; }
+
+.align-center {
+  text-align: center; }
+
+.align-justify {
+  text-align: justify; }
+
+.msg {
+  border-left: 2px solid transparent;
+  padding: 1.06667rem 1.06667rem; }
+  .msg--highlight {
+    background-color: #fff8e6;
+    border-color: #e2ac4f; }
+  .msg--info {
+    background: rgba(45, 97, 201, 0.03);
+    border-color: #039be5; }
+  .msg--success {
+    background: #f7fbf6;
+    border-color: #5ab44b; }
+  .msg--warning {
+    background: #fff3f3;
+    border-color: #c06367;
+    color: #a94442; }
+
+.dropcap:first-letter {
+  float: left;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 2.16943rem;
+  line-height: 0.7;
+  margin-right: 0.53333rem;
+  padding: 0.53333rem 0.53333rem 0.53333rem 0; }
+
+.pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin: 0.8rem 0; }
+  .pagination > a {
+    padding-left: 0;
+    padding-right: 0;
+    width: 49%; }
+  .pagination-right {
+    margin-left: auto; }
+
+.bottom {
+  background: #039be5;
+  color: #ffffff;
+  padding: 1.06667rem 4%;
+  text-align: center; }</style><style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript><script async src="https://cdn.ampproject.org/v0.js"></script><script custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js" async></script><script custom-element="amp-position-observer" src="https://cdn.ampproject.org/v0/amp-position-observer-0.1.js" async></script></head><body class="bg-white"><nav class="navbar wrap-inner" id="top"><div><a on="tap:navbar-sidebar.toggle" class="navbar-sidebar-toggle" title="Menu">Menu</a> <a class="logo logo-text" href="https://monooa.github.io/dev/python/amp/">Python</a></div></nav><main class="wrap-page"><article class="post"><div class="wrap-inner"><header class="post-header"><h1>How to Implement Django Function-Based Views</h1><p class="post-meta">[MISSING TRANSLATION] <a href="https://monooa.github.io/dev/python/amp/authors/aymen/" rel="nofollow" title="aymen">aymen</a> <time datetime="2025-03-29T16:23">March 29, 2025</time></p></header><p>Django, the high-level Python web framework, encourages rapid development and clean, pragmatic design. One of the fundamental building blocks of any Django application is the <strong>view</strong>. Views are responsible for processing incoming web requests and returning web responses.</p><p>Django offers two primary ways to write views: Function-Based Views (FBVs) and Class-Based Views (CBVs). While CBVs offer great structure and reusability for complex scenarios, <strong>Function-Based Views are often the simplest and most explicit way to handle requests</strong>, especially when you're starting out or dealing with straightforward logic.</p><p>This post will guide you through the basics of implementing FBVs in your Django project.</p><h3 id="what-are-function-based-views-">What are Function-Based Views?</h3><p>Simply put, a Function-Based View is a Python function that takes an <code>HttpRequest</code> object as its first parameter and returns an <code>HttpResponse</code> object (or one of its subclasses, like <code>JsonResponse</code> or a rendered template response).</p><pre><code class="lang-python"><span class="hljs-comment"># A minimal FBV</span>
+<span class="hljs-keyword">from</span> django.http <span class="hljs-keyword">import</span> HttpResponse
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">my_simple_view</span><span class="hljs-params">(request)</span>:</span>
+    <span class="hljs-comment"># ... some logic ...</span>
+    <span class="hljs-keyword">return</span> HttpResponse(<span class="hljs-string">"Hello from my simple view!"</span>)
+</code></pre><p>That's the core idea! Let's break down how to actually use them in a project.</p><h3 id="prerequisites">Prerequisites</h3><ul><li>Basic understanding of Python.</li><li>Django installed (<code>pip install django</code>).</li><li>A Django project set up (<code>django-admin startproject myproject</code>).</li><li>A Django app created within your project (<code>python manage.py startapp myapp</code>).</li></ul><h3 id="the-request-response-cycle-simplified-">The Request-Response Cycle (Simplified)</h3><ol><li>A user navigates to a URL in your application.</li><li>Django's URL dispatcher (<code>urls.py</code>) matches the requested URL pattern.</li><li>The dispatcher calls the associated view function, passing it an <code>HttpRequest</code> object containing details about the request (method, headers, GET/POST data, etc.).</li><li>Your view function performs some logic (e.g., interacts with the database, processes data).</li><li>Your view function creates and returns an <code>HttpResponse</code> object containing the content to be sent back to the user's browser.</li></ol><h3 id="step-by-step-implementation">Step-by-Step Implementation</h3><p>Let's create a few simple FBVs.</p><p><strong>Step 1: Define the URL Pattern</strong></p><p>First, you need to tell Django which URL should trigger your view function. Open your app's <code>urls.py</code> file (create one if it doesn't exist) and define a pattern:</p><pre><code class="lang-python"># myapp/urls.py
+from django.urls <span class="hljs-keyword">import</span> <span class="hljs-built_in">path</span>
+from . <span class="hljs-keyword">import</span> views # Import views from the current directory
+
+urlpatterns = [
+    <span class="hljs-built_in">path</span>(<span class="hljs-string">'hello/'</span>, views.hello_world, <span class="hljs-keyword">name</span>=<span class="hljs-string">'hello_world'</span>),
+    <span class="hljs-built_in">path</span>(<span class="hljs-string">'greet/&lt;str:name&gt;/'</span>, views.greet_user, <span class="hljs-keyword">name</span>=<span class="hljs-string">'greet_user'</span>),
+    <span class="hljs-built_in">path</span>(<span class="hljs-string">'info/'</span>, views.show_info, <span class="hljs-keyword">name</span>=<span class="hljs-string">'show_info'</span>),
+]
+</code></pre><p>Remember to include your app's URLs in your project's main <code>urls.py</code>:</p><pre><code class="lang-python"><span class="hljs-comment"># myproject/urls.py</span>
+<span class="hljs-built_in">from</span> django.contrib import admin
+<span class="hljs-built_in">from</span> django.urls import path, <span class="hljs-built_in">include</span> <span class="hljs-comment"># Make sure include is imported</span>
+
+urlpatterns = [
+    path(<span class="hljs-string">'admin/'</span>, admin.site.urls),
+    path(<span class="hljs-string">'myapp/'</span>, <span class="hljs-built_in">include</span>(<span class="hljs-string">'myapp.urls'</span>)), <span class="hljs-comment"># Include your app's URLs</span>
+]
+</code></pre><p><strong>Step 2: Create the View Functions</strong></p><p>Now, open <code>myapp/views.py</code> and create the Python functions corresponding to the URLs you defined.</p><p><strong>Example 1: A Basic <code>HttpResponse</code></strong></p><pre><code class="lang-python"><span class="hljs-comment"># myapp/views.py</span>
+<span class="hljs-keyword">from</span> django.http <span class="hljs-keyword">import</span> HttpResponse
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hello_world</span><span class="hljs-params">(request)</span>:</span>
+    <span class="hljs-string">"""
+    A very simple view returning plain text.
+    """</span>
+    html_content = <span class="hljs-string">"&lt;h1&gt;Hello, World!&lt;/h1&gt;&lt;p&gt;This is my first Django FBV.&lt;/p&gt;"</span>
+    <span class="hljs-keyword">return</span> HttpResponse(html_content)
+</code></pre><ul><li>This view takes the <code>request</code> object.</li><li>It returns a simple <code>HttpResponse</code> containing basic HTML.</li><li>If you run your development server (<code>python manage.py runserver</code>) and navigate to <code>/myapp/hello/</code>, you'll see this HTML rendered.</li></ul><p><strong>Example 2: Using URL Parameters</strong></p><p>Our second URL (<code>greet/&lt;str:name&gt;/</code>) captures a string from the URL. This captured value is passed as an additional argument to the view function.</p><pre><code class="lang-python"><span class="hljs-comment"># myapp/views.py (add this function)</span>
+<span class="hljs-comment"># from django.http import HttpResponse # Already imported</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">greet_user</span><span class="hljs-params">(request, name)</span>:</span>
+    <span class="hljs-string">"""
+    Takes a name from the URL and greets the user.
+    """</span>
+    <span class="hljs-comment"># Basic sanitization or validation could happen here</span>
+    greeting = f<span class="hljs-string">"&lt;h1&gt;Hello, {name.capitalize()}!&lt;/h1&gt;"</span>
+    <span class="hljs-keyword">return</span> HttpResponse(greeting)
+</code></pre><ul><li>Notice the second parameter <code>name</code>. Its name matches the capture group <code>&lt;str:name&gt;</code> in <code>urls.py</code>.</li><li>Navigate to <code>/myapp/greet/alice/</code> or <code>/myapp/greet/bob/</code> to see it in action.</li></ul><p><strong>Step 3: Rendering Templates</strong></p><p>Hardcoding HTML in views isn't practical. Django's template engine lets you separate presentation from logic.</p><p>First, create a <code>templates</code> directory inside your <code>myapp</code> directory, and inside that, another directory named <code>myapp</code> (this namespacing prevents template name collisions between apps): <code>myapp/templates/myapp/</code>.</p><p>Create a template file: <code>myapp/templates/myapp/info.html</code></p><pre><code class="lang-html"><span class="xml"><span class="hljs-comment">&lt;!-- myapp/templates/myapp/info.html --&gt;</span>
+<span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Information Page<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span></span><span class="hljs-template-variable">{{ page_title }}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Here is some information passed from the view:<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+        </span><span class="hljs-template-tag">{% <span class="hljs-name">for</span> item <span class="hljs-keyword">in</span> info_list %}</span><span class="xml">
+            <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span></span><span class="hljs-template-variable">{{ item }}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+        </span><span class="hljs-template-tag">{% <span class="hljs-name">empty</span> %}</span><span class="xml">
+            <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>No information available.<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+        </span><span class="hljs-template-tag">{% <span class="hljs-name">endfor</span> %}</span><span class="xml">
+    <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Request Method: </span><span class="hljs-template-variable">{{ request_method }}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span>
+</code></pre><p>Now, update <code>views.py</code> to use the <code>render</code> shortcut:</p><pre><code class="lang-python"><span class="hljs-comment"># myapp/views.py (add this function and import render)</span>
+<span class="hljs-comment"># from django.http import HttpResponse # Already imported</span>
+<span class="hljs-keyword">from</span> django.shortcuts <span class="hljs-keyword">import</span> render <span class="hljs-comment"># Import render</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show_info</span><span class="hljs-params">(request)</span>:</span>
+    <span class="hljs-string">"""
+    Renders an HTML template with context data.
+    """</span>
+    context = {
+        <span class="hljs-string">'page_title'</span>: <span class="hljs-string">'My Awesome Info Page'</span>,
+        <span class="hljs-string">'info_list'</span>: [<span class="hljs-string">'Django is cool'</span>, <span class="hljs-string">'FBVs are straightforward'</span>, <span class="hljs-string">'Templates keep things clean'</span>],
+        <span class="hljs-string">'request_method'</span>: request.method, <span class="hljs-comment"># Pass info from the request object</span>
+    }
+    <span class="hljs-comment"># The first argument is the request object.</span>
+    <span class="hljs-comment"># The second is the path to the template file (relative to template dirs).</span>
+    <span class="hljs-comment"># The third is the context dictionary.</span>
+    <span class="hljs-keyword">return</span> render(request, <span class="hljs-string">'myapp/info.html'</span>, context)
+</code></pre><ul><li><code>render()</code> combines a template with a context dictionary and returns an <code>HttpResponse</code>.</li><li>The <code>context</code> dictionary makes Python variables available within the template (e.g., <code>page_title</code> becomes <code>{{ page_title }}</code>).</li><li>Navigate to <code>/myapp/info/</code> to see the rendered template.</li></ul><p><strong>Step 4: Handling Different HTTP Methods (GET vs. POST)</strong></p><p>Views often need to behave differently depending on the request method (e.g., display a form on GET, process submitted data on POST).</p><pre><code class="lang-python"><span class="hljs-comment"># myapp/views.py (example, assumes a simple form might POST here)</span>
+<span class="hljs-comment"># from django.shortcuts import render</span>
+<span class="hljs-comment"># from django.http import HttpResponse</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_form</span><span class="hljs-params">(request)</span>:</span> <span class="hljs-comment"># Assume a URL maps to this view</span>
+    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">'POST'</span>:
+        <span class="hljs-comment"># Process the form data (e.g., save to database)</span>
+        submitted_data = request.POST.get(<span class="hljs-string">'user_input'</span>, <span class="hljs-string">'No data submitted'</span>)
+        <span class="hljs-comment"># Typically redirect after successful POST</span>
+        <span class="hljs-comment"># from django.shortcuts import redirect</span>
+        <span class="hljs-comment"># return redirect('some_success_url_name')</span>
+        <span class="hljs-keyword">return</span> HttpResponse(f<span class="hljs-string">"Received your POST request! Data: {submitted_data}"</span>)
+    <span class="hljs-keyword">else</span>: <span class="hljs-comment"># GET request (or any other method)</span>
+        <span class="hljs-comment"># Display a form or initial page</span>
+        <span class="hljs-comment"># You would typically render a template with a form here</span>
+        <span class="hljs-keyword">return</span> HttpResponse(<span class="hljs-string">"&lt;p&gt;This is the GET view. Please POST data.&lt;/p&gt;"</span>)
+
+<span class="hljs-comment"># Don't forget to add a URL pattern for this view in myapp/urls.py</span>
+<span class="hljs-comment"># path('myform/', views.handle_form, name='handle_form'),</span>
+</code></pre><h3 id="fbvs-vs-cbvs-when-to-choose-">FBVs vs. CBVs: When to Choose?</h3><ul><li><strong>Use FBVs when:</strong><ul><li>You are starting with Django.</li><li>The view logic is simple and unique.</li><li>You prefer explicit, straightforward code flow.</li><li>Handling simple AJAX requests or specific decorators.</li></ul></li><li><strong>Consider CBVs when:</strong><ul><li>You need reusable components (Mixins).</li><li>Your views handle complex object manipulation (CreateView, UpdateView, DeleteView, ListView, DetailView).</li><li>You want to leverage inheritance and structure for related views.</li><li>Your codebase grows large, and you need more organization.</li></ul></li></ul><h3 id="conclusion">Conclusion</h3><p>Function-Based Views are a fundamental and powerful part of Django. They provide a clear, direct way to handle web requests and generate responses. By understanding how to define URLs, write view functions, pass data using URL parameters, render templates with context, and handle different HTTP methods, you have a solid foundation for building dynamic web applications with Django.</p><p>Start simple with FBVs, practice rendering templates and handling basic logic, and you'll be well on your way to mastering Django development!</p><aside><div class="post-share"><amp-social-share type="system" width="40" height="40" data-param-text="How to Implement Django Function-Based Views"></amp-social-share><amp-social-share type="facebook" width="40" height="40" data-param-app_id="" data-param-text="How to Implement Django Function-Based Views" data-param-href="https://monooa.github.io/dev/python/amp/how-to-implement-django-function-based-views.html"></amp-social-share><amp-social-share type="twitter" width="40" height="40" data-param-text="How to Implement Django Function-Based Views" data-param-url="https://monooa.github.io/dev/python/amp/how-to-implement-django-function-based-views.html"></amp-social-share><amp-social-share type="pinterest" width="40" height="40" data-param-url="https://monooa.github.io/dev/python/amp/how-to-implement-django-function-based-views.html"></amp-social-share><amp-social-share type="tumblr" width="40" height="40" data-param-text="How to Implement Django Function-Based Views" data-param-url="https://monooa.github.io/dev/python/amp/how-to-implement-django-function-based-views.html"></amp-social-share><amp-social-share type="whatsapp" width="40" height="40" data-param-text="How to Implement Django Function-Based Views" data-param-url="https://monooa.github.io/dev/python/amp/how-to-implement-django-function-based-views.html"></amp-social-share></div></aside></div></article></main><amp-animation id="showAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "1",
+                            "visibility": "visible",
+                            "transform": "scale(1)"
+                        }]
+                    }]
+                }</script></amp-animation><amp-animation id="hideAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "0",
+                            "visibility": "hidden",
+                            "transform": "scale(0.1)"
+                        }]
+                    }]
+                }</script></amp-animation><div class="post-scroll-marker"><amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer></div><button class="post-scroll" on="tap:top.scrollTo(duration=200)">&#8593;</button><footer class="bottom">Powered by Publii</footer><amp-sidebar id="navbar-sidebar" layout="nodisplay"><ul></ul></amp-sidebar></body></html>

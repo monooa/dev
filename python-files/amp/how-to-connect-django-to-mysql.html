@@ -1,0 +1,651 @@
+<!doctype html><html amp lang="en-gb"><head><meta charset="utf-8"><title>How to Connect Django to MySQL - Python</title><meta name="description" content="Django's flexibility is one of its greatest strengths, and this extends to its database support. While Django projects default to SQLite – fantastic for development and simple applications – many production environments demand a more robust, scalable, and feature-rich database. Enter MySQL, a hugely popular&hellip;"><link rel="canonical" href="https://monooa.github.io/dev/python/how-to-connect-django-to-mysql.html"><meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet" type="text/css"><script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script><script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script><script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script><script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://monooa.github.io/dev/python/amp/how-to-connect-django-to-mysql.html"},"headline":"How to Connect Django to MySQL","datePublished":"2025-03-29T16:40","dateModified":"2025-03-29T16:40","description":"Django's flexibility is one of its greatest strengths, and this extends to its database support. While Django projects default to SQLite – fantastic for development and simple applications – many production environments demand a more robust, scalable, and feature-rich database. Enter MySQL, a hugely popular&hellip;","author":{"@type":"Person","name":"aymen","url":"https://monooa.github.io/dev/python/amp/authors/aymen/"},"publisher":{"@type":"Organization","name":"aymen"}}</script><style amp-custom>article,
+aside,
+footer,
+header,
+hgroup,
+main,
+nav,
+section {
+  display: block; }
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0; }
+
+li {
+  list-style: none; }
+
+amp-img {
+  max-width: 100%; }
+
+button,
+input,
+select,
+textarea {
+  font: inherit; }
+
+html {
+  font-size: 1rem; }
+
+body {
+  background: #f1f1f1;
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.6; }
+
+a {
+  color:  #039be5;
+  text-decoration: none;
+  -webkit-transition: all 0.12s linear 0s;
+  -o-transition: all 0.12s linear 0s;
+  transition: all 0.12s linear 0s; }
+
+a:hover {
+  color: #262626;
+  text-decoration: underline;
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip: ink; }
+
+a:active {
+  color: #262626; }
+
+a:focus {
+  outline: 2px dotted #039be5; }
+
+figure,
+blockquote,
+p,
+ul,
+ol,
+dl,
+table,
+hr,
+fieldset {
+  margin-top: 1.6rem; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 2.13333rem; }
+
+h1 {
+  font-size: 1.67583rem;
+  font-weight: normal; }
+
+h2 {
+  font-size: 1.4729rem; }
+
+h3 {
+  font-size: 1.29454rem; }
+
+h4 {
+  font-size: 1.13778rem; }
+
+h5 {
+  font-size: 1rem; }
+
+h6 {
+  font-size: 0.87891rem; }
+
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+  margin-top: 0.8rem; }
+
+b,
+strong {
+  font-weight: 600; }
+
+blockquote {
+  color: #6c7175;
+  font-family: "Droid Serif", "Times", "Source Serif Pro", serif;
+  font-style: italic;
+  padding: 1.33333rem 0.53333rem 1.33333rem 3.2rem;
+  position: relative; }
+  blockquote:before {
+    display: block;
+    content: "\201C";
+    font-size: 4.41226rem;
+    position: absolute;
+    left: 0;
+    top: -12px;
+    color: rgba(108, 113, 117, 0.5); }
+  blockquote > :nth-child(1) {
+    margin-top: 0; }
+
+ul,
+ol {
+  margin-left: 2rem; }
+  ul > li,
+  ol > li {
+    list-style: inherit;
+    padding: 0 0 0.26667rem 0.26667rem; }
+
+dl dt {
+  color: #262626;
+  font-weight: 600; }
+
+code,
+pre {
+  background-color: #f1f1f1;
+  font-family: monospace; }
+
+pre {
+  margin: 1.6rem 0 0;
+  padding: 1.6rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto; }
+  pre > code {
+    color: #262626;
+    padding: 0; }
+
+code {
+  border-radius: 3px;
+  color: #262626;
+  padding: 0.26667rem 0.53333rem; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #d4d4d4;
+  width: 100%;
+  overflow-x: auto;
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap; }
+  table th {
+    font-weight: 500;
+    padding: 0.53333rem 1.06667rem; }
+  table tr {
+    border-bottom: 1px solid #d4d4d4; }
+    table tr:nth-child(2n) {
+      background: #f1f1f1; }
+  table td {
+    padding: 0.53333rem 1.06667rem; }
+
+figcaption {
+  clear: both;
+  color: rgba(108, 113, 117, 0.6);
+  font-size: 0.82397rem;
+  margin: 0.8rem 0 0;
+  text-align: center; }
+
+sub,
+sup {
+  font-size: 65%; }
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+
+.btn, [type=button],
+[type=submit],
+button {
+  background: #039be5;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.87891rem;
+  font-weight: 500;
+  line-height: 1.9;
+  padding: 0.53333rem 1.33333rem;
+  text-align: center;
+  text-decoration: none;
+  -webkit-transition: all .15s ease;
+  -o-transition: all .15s ease;
+  transition: all .15s ease;
+  width: auto; }
+  .btn:hover, [type=button]:hover,
+  [type=submit]:hover,
+  button:hover {
+    background: #262626;
+    color: #ffffff; }
+  .btn:focus, [type=button]:focus,
+  [type=submit]:focus,
+  button:focus {
+    outline: none; }
+  .btn-outline {
+    border: 1px solid #ddd;
+    background: #ffffff;
+    border-radius: 3px;
+    color: #262626; }
+
+[type=button],
+[type=submit],
+button {
+  text-transform: uppercase;
+  -webkit-appearance: none;
+  -moz-appearance: none; }
+
+.navbar {
+  background: #039be5;
+  -webkit-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  line-height: 3;
+  max-height: 4rem; }
+  .navbar > div {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto; }
+  .navbar a {
+    color: #ffffff;
+    text-decoration: none; }
+  .navbar-sidebar-toggle {
+    left: 0;
+    position: relative;
+    text-indent: -99999rem; }
+    .navbar-sidebar-toggle:before {
+      content: "";
+      display: block;
+      border-top: 0.375rem double #ffffff;
+      border-bottom: 0.125rem solid #ffffff;
+      height: 0.125rem;
+      position: absolute;
+      text-indent: 0;
+      top: 50%;
+      width: 1.3rem;
+      -webkit-transform: translate(0px, -50%);
+      -ms-transform: translate(0px, -50%);
+      transform: translate(0px, -50%); }
+
+
+.logo {
+            display: inline-block;
+  font-weight: 600;
+  line-height: 1;
+            margin: 0 auto;
+            height: 2rem;
+            text-indent: -9999px;
+            width: 240px;vertical-align: middle;
+        }
+        .logo.logo-text {
+            line-height: 2;
+            text-align: center;
+            text-indent: 0;
+        }
+
+amp-sidebar {
+  background: #ffffff;
+  width: 240px; }
+  amp-sidebar > ul {
+    margin: 0.8rem 0 0;
+    padding: 0; }
+    amp-sidebar > ul ul {
+      border-left: 1px solid #d4d4d4;
+      margin: 0.53333rem 0 0; }
+    amp-sidebar > ul li {
+      color: #262626;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      list-style: none;
+      line-height: 1.4;
+      padding: 0.42667rem 1.06667rem; }
+      amp-sidebar > ul li li {
+        font-weight: normal;
+        padding: 0.26667rem 0 0.26667rem 1.06667rem; }
+    amp-sidebar > ul a,
+    amp-sidebar > ul a:visited {
+      color: #262626; }
+
+.bg-white {
+  background: #ffffff; }
+
+.wrap-page {
+  max-width: 700px;
+  margin: 0 auto; }
+
+@media all and (max-width: 43.6875em) {
+  .wrap-inner {
+    padding: 0 6%; } }
+
+.page-title {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding: 1.6rem 6%; }
+  .page-title > h1 {
+    margin: 0;
+    font-size: 1.29454rem; }
+  .page-title > p {
+    font-size: 0.87891rem;
+    color: #6c7175;
+    line-height: 1.3;
+    margin: 0.26667rem 0 0; }
+  .page-title-author {
+    border-radius: 50%;
+    float: left;
+    height: 2.5rem;
+    width: 2.5rem; }
+    .page-title-author + h1 {
+      margin-left: 3.5rem; }
+      .page-title-author + h1 + p {
+        margin-left: 3.5rem; }
+
+.card {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding-bottom: 1.06667rem; }
+
+  .card-meta {
+    border-top: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-top: 1.06667rem;
+    text-transform: uppercase; }
+    .card-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .card-text {
+    font-size: 0.9375rem;
+    overflow: hidden;
+    padding: 0 6%; }
+    .card-text h2 {
+      font-size: 1.13778rem; }
+
+.post {
+  margin-bottom: 2.13333rem; }
+  .post-featured-image {
+    margin-top: 0;
+    position: relative; }
+    .post-featured-image > figcaption {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 3px;
+      color: #ffffff;
+      position: absolute;
+      bottom: 0.8rem;
+      padding: 0 0.26667rem;
+      right: 6%; }
+  .post-header {
+    margin-bottom: 2.13333rem; }
+  .post-meta {
+    border-bottom: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-bottom: 1.06667rem;
+    text-transform: uppercase; }
+    .post-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .post-tag {
+    margin: 0; }
+    .post-tag > li {
+      display: inline-block;
+      padding: 0; }
+      .post-tag > li a {
+        background: #f1f1f1;
+        border-radius: 2px;
+        color: #6c7175;
+        font-size: 0.77248rem;
+        display: inline-block;
+        margin: 0 0.26667rem 0.26667rem 0;
+        padding: 0.26667rem 0.53333rem; }
+        .post-tag > li a:hover {
+          background: #039be5;
+          color: #ffffff;
+          text-decoration: none; }
+  .post-share {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-top: 1.6rem;
+    width: 100%; }
+    .post-share amp-social-share {
+      -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+      flex: 1 0 auto;
+      background-size: 24px; }
+  .post-scroll {
+    color: #ffffff;
+    background: #039be5;
+    bottom: 10px;
+    border-radius: 50%;
+    border: none;
+    -webkit-box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    font-size: 1.13778rem;
+    height: 46px;
+    opacity: 0;
+    outline: none;
+    position: fixed;
+    padding: 0;
+    right: 4%;
+    visibility: hidden;
+    width: 46px;
+    z-index: 9999; }
+    .post-scroll-marker {
+      height: 0px;
+      position: absolute;
+      top: 100px;
+      width: 0px; }
+        .post-pagination {
+    background: #f1f1f1;
+    -webkit-box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    border-top: 1px solid #d4d4d4;
+    padding: 1.06667rem 0; }
+    .post-pagination > div {
+      line-height: 1.2;
+      padding: 0.53333rem 1.06667rem;
+      text-align: center; }
+      .post-pagination > div span {
+        display: block;
+        color: #6c7175;
+        font-size: 0.7242rem;
+        font-weight: 500;
+        margin-bottom: 0.26667rem;
+        text-transform: uppercase; }
+    .post-pagination-prev a:before {
+      content: "\2190";
+      margin-right: 0.26667rem; }
+    .post-pagination-next a:after {
+      content: "\2192";
+      margin-left: 0.26667rem; }
+
+aside {
+  margin: 1.6rem 0 0; }
+
+.align-left {
+  text-align: left; }
+
+.align-right {
+  text-align: right; }
+
+.align-center {
+  text-align: center; }
+
+.align-justify {
+  text-align: justify; }
+
+.msg {
+  border-left: 2px solid transparent;
+  padding: 1.06667rem 1.06667rem; }
+  .msg--highlight {
+    background-color: #fff8e6;
+    border-color: #e2ac4f; }
+  .msg--info {
+    background: rgba(45, 97, 201, 0.03);
+    border-color: #039be5; }
+  .msg--success {
+    background: #f7fbf6;
+    border-color: #5ab44b; }
+  .msg--warning {
+    background: #fff3f3;
+    border-color: #c06367;
+    color: #a94442; }
+
+.dropcap:first-letter {
+  float: left;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 2.16943rem;
+  line-height: 0.7;
+  margin-right: 0.53333rem;
+  padding: 0.53333rem 0.53333rem 0.53333rem 0; }
+
+.pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin: 0.8rem 0; }
+  .pagination > a {
+    padding-left: 0;
+    padding-right: 0;
+    width: 49%; }
+  .pagination-right {
+    margin-left: auto; }
+
+.bottom {
+  background: #039be5;
+  color: #ffffff;
+  padding: 1.06667rem 4%;
+  text-align: center; }</style><style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript><script async src="https://cdn.ampproject.org/v0.js"></script><script custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js" async></script><script custom-element="amp-position-observer" src="https://cdn.ampproject.org/v0/amp-position-observer-0.1.js" async></script></head><body class="bg-white"><nav class="navbar wrap-inner" id="top"><div><a on="tap:navbar-sidebar.toggle" class="navbar-sidebar-toggle" title="Menu">Menu</a> <a class="logo logo-text" href="https://monooa.github.io/dev/python/amp/">Python</a></div></nav><main class="wrap-page"><article class="post"><div class="wrap-inner"><header class="post-header"><h1>How to Connect Django to MySQL</h1><p class="post-meta">[MISSING TRANSLATION] <a href="https://monooa.github.io/dev/python/amp/authors/aymen/" rel="nofollow" title="aymen">aymen</a> <time datetime="2025-03-29T16:40">March 29, 2025</time></p></header><p>Django's flexibility is one of its greatest strengths, and this extends to its database support. While Django projects default to SQLite – fantastic for development and simple applications – many production environments demand a more robust, scalable, and feature-rich database. Enter MySQL, a hugely popular open-source relational database management system (RDBMS).</p><p>Connecting your Django application to MySQL is a common requirement, and thankfully, it's a straightforward process. This guide will walk you through every step, from installing the necessary driver to configuring your settings and verifying the connection.</p><p><strong>Why Choose MySQL over SQLite for Your Django Project?</strong></p><ul><li><strong>Scalability:</strong> MySQL is designed to handle much larger datasets and higher concurrent user loads than SQLite.</li><li><strong>Concurrency:</strong> It manages simultaneous read/write operations much more effectively.</li><li><strong>Features:</strong> Offers advanced features like stored procedures, triggers, robust user management, and replication.</li><li><strong>Industry Standard:</strong> Widely used in the industry, making it easier to find hosting, tooling, and experienced developers.</li></ul><p>Ready to make the switch? Let's dive in!</p><h3 id="prerequisites">Prerequisites</h3><p>Before we start, make sure you have the following:</p><ol><li><strong>Python and Django Installed:</strong> You should have a working Python environment and Django installed (<code>pip install django</code>).</li><li><strong>A Django Project:</strong> Have a Django project created (<code>django-admin startproject myproject</code>).</li><li><strong>MySQL Server Running:</strong> You need access to a running MySQL server (either installed locally or on a remote host).</li><li><strong>MySQL Client Tools (Recommended):</strong> Tools like the <code>mysql</code> command-line client or a GUI tool (like MySQL Workbench, DBeaver, TablePlus) are helpful for creating the database and user.</li></ol><h3 id="step-1-install-the-mysql-database-driver">Step 1: Install the MySQL Database Driver</h3><p>Django needs a way to communicate with MySQL. The most common Python connector library for this is <code>mysqlclient</code>. It's a fork of the original <code>MySQLdb</code> and generally the recommended choice.</p><p>Open your terminal or command prompt (make sure your project's virtual environment is activated!) and run:</p><pre><code class="lang-bash">pip <span class="hljs-keyword">install</span> mysqlclient
+</code></pre><p><strong>Troubleshooting <code>mysqlclient</code> Installation:</strong></p><p>Sometimes, installing <code>mysqlclient</code> can be tricky because it has system-level dependencies (MySQL development headers and libraries).</p><ul><li><strong>On Debian/Ubuntu:</strong> You might need <code>python3-dev</code> and <code>libmysqlclient-dev</code>.<pre><code class="lang-bash">sudo apt <span class="hljs-keyword">update</span>
+sudo apt <span class="hljs-keyword">install</span> python3-dev <span class="hljs-keyword">default</span>-libmysqlclient-dev <span class="hljs-keyword">build</span>-essential
+# <span class="hljs-keyword">Then</span> try pip <span class="hljs-keyword">install</span> again
+</code></pre></li><li><strong>On macOS (using Homebrew):</strong><pre><code class="lang-bash">brew <span class="hljs-keyword">install</span> mysql
+# You might need <span class="hljs-keyword">to</span> <span class="hljs-keyword">set</span> environment <span class="hljs-keyword">variables</span> <span class="hljs-keyword">before</span> pip <span class="hljs-keyword">install</span>, <span class="hljs-keyword">check</span> mysqlclient docs
+</code></pre></li><li><strong>On Windows:</strong> Consider installing pre-compiled binaries if available or using alternatives like <code>mysql-connector-python</code> (<code>pip install mysql-connector-python-rf</code>), though <code>mysqlclient</code> is often preferred for performance. If using <code>mysql-connector-python</code>, the <code>ENGINE</code> setting in Django will be slightly different (<code>mysql.connector.django</code>). We'll stick with <code>mysqlclient</code> for this guide.</li></ul><h3 id="step-2-create-your-mysql-database-and-user">Step 2: Create Your MySQL Database and User</h3><p>For security reasons, <strong>never</strong> connect your Django application using the MySQL <code>root</code> user. Always create a dedicated database and user for your application.</p><p>Log in to your MySQL server using a client tool (like the <code>mysql</code> command line):</p><pre><code class="lang-bash"><span class="hljs-attribute">mysql -u root -p</span>
+</code></pre><p>Enter your MySQL root password when prompted. Now, run the following SQL commands, replacing <code>your_db_name</code>, <code>your_db_user</code>, and <code>your_strong_password</code> with your desired values:</p><pre><code class="lang-sql"><span class="hljs-comment">-- Create the database (using utf8mb4 is highly recommended for full Unicode support)</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">DATABASE</span> your_db_name <span class="hljs-built_in">CHARACTER</span> <span class="hljs-keyword">SET</span> utf8mb4 <span class="hljs-keyword">COLLATE</span> utf8mb4_unicode_ci;
+
+<span class="hljs-comment">-- Create the dedicated user</span>
+<span class="hljs-comment">-- Use 'localhost' if Django runs on the same server as MySQL.</span>
+<span class="hljs-comment">-- Use '%' or a specific IP if Django runs on a different server.</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'your_db_user'</span>@<span class="hljs-string">'localhost'</span> <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'your_strong_password'</span>;
+
+<span class="hljs-comment">-- Grant necessary privileges to the user ON the specific database</span>
+<span class="hljs-keyword">GRANT</span> ALL <span class="hljs-keyword">PRIVILEGES</span> <span class="hljs-keyword">ON</span> your_db_name.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'your_db_user'</span>@<span class="hljs-string">'localhost'</span>;
+
+<span class="hljs-comment">-- Apply the changes</span>
+<span class="hljs-keyword">FLUSH</span> <span class="hljs-keyword">PRIVILEGES</span>;
+
+<span class="hljs-comment">-- Exit MySQL client</span>
+EXIT;
+</code></pre><p><strong>Important:</strong></p><ul><li>Using <code>utf8mb4</code> ensures you can store emojis and a wider range of Unicode characters correctly.</li><li>Replace <code>'localhost'</code> with the actual IP address or hostname if your Django app connects to a <em>remote</em> MySQL server. Using <code>'%'</code> grants access from any host, which might be less secure.</li></ul><h3 id="step-3-configure-django-s-settings-py-">Step 3: Configure Django's <code>settings.py</code></h3><p>Now, tell Django how to connect to the database you just created. Open your project's <code>settings.py</code> file (usually located in <code>myproject/myproject/settings.py</code>).</p><p>Find the <code>DATABASES</code> dictionary. By default, it looks something like this:</p><pre><code class="lang-python"><span class="hljs-type">DATABASES</span> = {
+    <span class="hljs-symbol">'default'</span>: {
+        <span class="hljs-symbol">'ENGINE'</span>: <span class="hljs-symbol">'django</span>.db.backends.sqlite3',
+        <span class="hljs-symbol">'NAME'</span>: <span class="hljs-type">BASE_DIR</span> / <span class="hljs-symbol">'db</span>.sqlite3',
+    }
+}
+</code></pre><p>Modify it to use MySQL with the details from Step 2:</p><pre><code class="lang-python"><span class="hljs-comment"># settings.py</span>
+
+<span class="hljs-keyword">import</span> os <span class="hljs-comment"># Make sure 'os' is imported, usually at the top</span>
+
+DATABASES = {
+    <span class="hljs-string">'default'</span>: {
+        <span class="hljs-string">'ENGINE'</span>: <span class="hljs-string">'django.db.backends.mysql'</span>, <span class="hljs-comment"># Use the MySQL engine</span>
+        <span class="hljs-string">'NAME'</span>: <span class="hljs-string">'your_db_name'</span>,             <span class="hljs-comment"># The name of the database you created</span>
+        <span class="hljs-string">'USER'</span>: <span class="hljs-string">'your_db_user'</span>,             <span class="hljs-comment"># The user you created</span>
+        <span class="hljs-string">'PASSWORD'</span>: <span class="hljs-string">'your_strong_password'</span>, <span class="hljs-comment"># The password you set</span>
+        <span class="hljs-string">'HOST'</span>: <span class="hljs-string">'localhost'</span>,                <span class="hljs-comment"># Or the IP/hostname of your DB server</span>
+        <span class="hljs-string">'PORT'</span>: <span class="hljs-string">'3306'</span>,                     <span class="hljs-comment"># Default MySQL port (often optional, can be left as '' or removed if default)</span>
+        <span class="hljs-comment"># Optional: Add connection options if needed</span>
+        <span class="hljs-comment"># 'OPTIONS': {</span>
+        <span class="hljs-comment">#     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",</span>
+        <span class="hljs-comment"># },</span>
+    }
+}
+</code></pre><p><strong>Security Best Practice:</strong> Avoid hardcoding sensitive information like passwords directly in <code>settings.py</code>. Use environment variables instead!</p><pre><code class="lang-python"><span class="hljs-meta"># Example using environment variables (requires python-dotenv or similar)</span>
+<span class="hljs-meta"># pip install python-dotenv</span>
+<span class="hljs-meta"># In your .env file: DB_PASSWORD=your_strong_password</span>
+
+<span class="hljs-function"><span class="hljs-keyword">from</span> dotenv import load_dotenv
+<span class="hljs-title">load_dotenv</span>() # Loads variables <span class="hljs-keyword">from</span> .env file
+
+DATABASES </span>= {
+    <span class="hljs-string">'default'</span>: {
+        <span class="hljs-string">'ENGINE'</span>: <span class="hljs-string">'django.db.backends.mysql'</span>,
+        <span class="hljs-string">'NAME'</span>: os.environ.<span class="hljs-keyword">get</span>(<span class="hljs-string">'DB_NAME'</span>, <span class="hljs-string">'your_db_name'</span>),
+        <span class="hljs-string">'USER'</span>: os.environ.<span class="hljs-keyword">get</span>(<span class="hljs-string">'DB_USER'</span>, <span class="hljs-string">'your_db_user'</span>),
+        <span class="hljs-string">'PASSWORD'</span>: os.environ.<span class="hljs-keyword">get</span>(<span class="hljs-string">'DB_PASSWORD'</span>), <span class="hljs-meta"># Crucial!</span>
+        <span class="hljs-string">'HOST'</span>: os.environ.<span class="hljs-keyword">get</span>(<span class="hljs-string">'DB_HOST'</span>, <span class="hljs-string">'localhost'</span>),
+        <span class="hljs-string">'PORT'</span>: os.environ.<span class="hljs-keyword">get</span>(<span class="hljs-string">'DB_PORT'</span>, <span class="hljs-string">'3306'</span>),
+    }
+}
+</code></pre><h3 id="step-4-run-migrations">Step 4: Run Migrations</h3><p>With the settings updated, Django now knows about your MySQL database. The next step is to apply Django's built-in table structures (for authentication, sessions, etc.) and any models defined in your apps to this new database.</p><p>Run the following commands in your terminal (in your project's root directory, where <code>manage.py</code> is located):</p><pre><code class="lang-bash">python manage.py makemigrations
+# This might show <span class="hljs-string">"No changes detected"</span> <span class="hljs-keyword">if</span> you haven<span class="hljs-symbol">'t</span> added custom models yet.
+python manage.py migrate
+</code></pre><p>If the <code>migrate</code> command runs successfully without errors, it means Django connected to your MySQL database and created the necessary tables. Hooray!</p><h3 id="step-5-test-the-connection">Step 5: Test the Connection</h3><p>The final step is to ensure everything works as expected:</p><ol><li><p><strong>Run the Development Server:</strong></p><pre><code class="lang-bash">python manage<span class="hljs-selector-class">.py</span> runserver
+</code></pre><p>If the server starts without any database-related errors, that's a great sign.</p></li><li><p><strong>Access Database-Driven Features:</strong> Try accessing the Django admin (<code>/admin/</code>) or any part of your site that interacts with the database (e.g., creating a user, adding data via your models).</p></li><li><p><strong>Use <code>dbshell</code> (Optional):</strong> Django provides a handy command to directly access the configured database's shell:</p><pre><code class="lang-bash">python manage<span class="hljs-selector-class">.py</span> dbshell
+</code></pre><p>This should open the <code>mysql</code> command-line client, logged in as <code>your_db_user</code> to <code>your_db_name</code>. You can run SQL commands like <code>SHOW TABLES;</code> to verify.</p></li></ol><h3 id="common-issues-and-troubleshooting">Common Issues and Troubleshooting</h3><ul><li><strong><code>OperationalError: (1045, "Access denied for user 'your_db_user'@'localhost'...")</code></strong>: Double-check your <code>USER</code>, <code>PASSWORD</code>, and <code>HOST</code> in <code>settings.py</code>. Ensure the user privileges were granted correctly in MySQL and that you ran <code>FLUSH PRIVILEGES;</code>. Make sure the <code>HOST</code> matches where MySQL expects the connection from (e.g., <code>localhost</code> vs. an IP).</li><li><strong><code>OperationalError: (2002, "Can't connect to local MySQL server through socket...")</code></strong> or <strong><code>(2003, "Can't connect to MySQL server on 'host'...")</code></strong>: The MySQL server isn't running, or the <code>HOST</code>/<code>PORT</code> in <code>settings.py</code> is incorrect, or a firewall is blocking the connection.</li><li><strong><code>ImproperlyConfigured: Error loading MySQLdb module.</code></strong>: The <code>mysqlclient</code> library is not installed correctly or isn't found in your Python environment. Revisit Step 1.</li><li><strong>Character Encoding Errors:</strong> If you didn't use <code>utf8mb4</code> when creating the database, you might encounter errors storing certain characters. It's best to set up <code>utf8mb4</code> from the start.</li></ul><h3 id="conclusion">Conclusion</h3><p>You've successfully configured your Django project to use MySQL! By switching from SQLite to MySQL, you've opened the door to better scalability, performance under load, and a richer set of database features suitable for production applications.</p><p>Remember to always handle database credentials securely using environment variables and create dedicated database users with limited privileges. Happy coding!</p><hr><p>Feel free to ask questions or share your experiences in the comments below!</p><aside><div class="post-share"><amp-social-share type="system" width="40" height="40" data-param-text="How to Connect Django to MySQL"></amp-social-share><amp-social-share type="facebook" width="40" height="40" data-param-app_id="" data-param-text="How to Connect Django to MySQL" data-param-href="https://monooa.github.io/dev/python/amp/how-to-connect-django-to-mysql.html"></amp-social-share><amp-social-share type="twitter" width="40" height="40" data-param-text="How to Connect Django to MySQL" data-param-url="https://monooa.github.io/dev/python/amp/how-to-connect-django-to-mysql.html"></amp-social-share><amp-social-share type="pinterest" width="40" height="40" data-param-url="https://monooa.github.io/dev/python/amp/how-to-connect-django-to-mysql.html"></amp-social-share><amp-social-share type="tumblr" width="40" height="40" data-param-text="How to Connect Django to MySQL" data-param-url="https://monooa.github.io/dev/python/amp/how-to-connect-django-to-mysql.html"></amp-social-share><amp-social-share type="whatsapp" width="40" height="40" data-param-text="How to Connect Django to MySQL" data-param-url="https://monooa.github.io/dev/python/amp/how-to-connect-django-to-mysql.html"></amp-social-share></div></aside></div></article></main><amp-animation id="showAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "1",
+                            "visibility": "visible",
+                            "transform": "scale(1)"
+                        }]
+                    }]
+                }</script></amp-animation><amp-animation id="hideAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "0",
+                            "visibility": "hidden",
+                            "transform": "scale(0.1)"
+                        }]
+                    }]
+                }</script></amp-animation><div class="post-scroll-marker"><amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer></div><button class="post-scroll" on="tap:top.scrollTo(duration=200)">&#8593;</button><footer class="bottom">Powered by Publii</footer><amp-sidebar id="navbar-sidebar" layout="nodisplay"><ul></ul></amp-sidebar></body></html>
