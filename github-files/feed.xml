@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
     <title>Github</title>
-    <link href="https://monooa.github.io/ar/github/feed.xml" rel="self" />
-    <link href="https://monooa.github.io/ar/github" />
+    <link href="https://monooa.github.io/dev/github-files/feed.xml" rel="self" />
+    <link href="https://monooa.github.io/dev/github-files" />
     <updated>2025-03-27T15:55:51+01:00</updated>
     <author>
         <name>aymen</name>
     </author>
-    <id>https://monooa.github.io/ar/github</id>
+    <id>https://monooa.github.io/dev/github-files</id>
 
     <entry>
         <title>GitHub Packages &amp; Container Registry( Github)</title>
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/github-packages-and-container-registry-github/"/>
-        <id>https://monooa.github.io/ar/github/github-packages-and-container-registry-github/</id>
+        <link href="https://monooa.github.io/dev/github-files/github-packages-and-container-registry-github/"/>
+        <id>https://monooa.github.io/dev/github-files/github-packages-and-container-registry-github/</id>
 
         <updated>2025-03-27T15:55:51+01:00</updated>
             <summary>
@@ -123,8 +123,8 @@ docker <span class="hljs-keyword">push</span> ghcr.io/<span class="hljs-keyword"
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/github-security-features-github/"/>
-        <id>https://monooa.github.io/ar/github/github-security-features-github/</id>
+        <link href="https://monooa.github.io/dev/github-files/github-security-features-github/"/>
+        <id>https://monooa.github.io/dev/github-files/github-security-features-github/</id>
 
         <updated>2025-03-27T15:54:26+01:00</updated>
             <summary>
@@ -207,8 +207,8 @@ docker <span class="hljs-keyword">push</span> ghcr.io/<span class="hljs-keyword"
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/github-actions-cicd-and-automation-github/"/>
-        <id>https://monooa.github.io/ar/github/github-actions-cicd-and-automation-github/</id>
+        <link href="https://monooa.github.io/dev/github-files/github-actions-cicd-and-automation-github/"/>
+        <id>https://monooa.github.io/dev/github-files/github-actions-cicd-and-automation-github/</id>
 
         <updated>2025-03-27T15:53:00+01:00</updated>
             <summary>
@@ -313,8 +313,8 @@ docker <span class="hljs-keyword">push</span> ghcr.io/<span class="hljs-keyword"
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/collaboration-issues-prs-discussions-projects-github/"/>
-        <id>https://monooa.github.io/ar/github/collaboration-issues-prs-discussions-projects-github/</id>
+        <link href="https://monooa.github.io/dev/github-files/collaboration-issues-prs-discussions-projects-github/"/>
+        <id>https://monooa.github.io/dev/github-files/collaboration-issues-prs-discussions-projects-github/</id>
 
         <updated>2025-03-27T15:51:35+01:00</updated>
             <summary>
@@ -439,8 +439,8 @@ docker <span class="hljs-keyword">push</span> ghcr.io/<span class="hljs-keyword"
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/branching-and-merging-github/"/>
-        <id>https://monooa.github.io/ar/github/branching-and-merging-github/</id>
+        <link href="https://monooa.github.io/dev/github-files/branching-and-merging-github/"/>
+        <id>https://monooa.github.io/dev/github-files/branching-and-merging-github/</id>
 
         <updated>2025-03-27T15:50:10+01:00</updated>
             <summary>
@@ -607,8 +607,8 @@ docker <span class="hljs-keyword">push</span> ghcr.io/<span class="hljs-keyword"
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/repositories-and-management-github/"/>
-        <id>https://monooa.github.io/ar/github/repositories-and-management-github/</id>
+        <link href="https://monooa.github.io/dev/github-files/repositories-and-management-github/"/>
+        <id>https://monooa.github.io/dev/github-files/repositories-and-management-github/</id>
 
         <updated>2025-03-27T15:48:44+01:00</updated>
             <summary>
@@ -693,8 +693,8 @@ docker <span class="hljs-keyword">push</span> ghcr.io/<span class="hljs-keyword"
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/getting-started-and-core-concepts-git-and-github-github/"/>
-        <id>https://monooa.github.io/ar/github/getting-started-and-core-concepts-git-and-github-github/</id>
+        <link href="https://monooa.github.io/dev/github-files/getting-started-and-core-concepts-git-and-github-github/"/>
+        <id>https://monooa.github.io/dev/github-files/getting-started-and-core-concepts-git-and-github-github/</id>
 
         <updated>2025-03-27T15:47:19+01:00</updated>
             <summary>
@@ -826,8 +826,8 @@ git <span class="hljs-built_in">merge</span> feature/<span class="hljs-built_in"
         <author>
             <name>aymen</name>
         </author>
-        <link href="https://monooa.github.io/ar/github/ggggg/"/>
-        <id>https://monooa.github.io/ar/github/ggggg/</id>
+        <link href="https://monooa.github.io/dev/github-files/ggggg/"/>
+        <id>https://monooa.github.io/dev/github-files/ggggg/</id>
 
         <updated>2025-03-27T15:37:11+01:00</updated>
             <summary></summary>
