@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="en-gb"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dealing with errors during form submissions( SvelteKit ). - SvelteKit</title><meta name="description" content="Forms. They're the lifeblood of user interaction. From logging in to ordering that new gadget you've been eyeing, forms are everywhere. But let's be honest, things don't always go according to plan. Users mistype emails, servers hiccup, and sometimes, just sometimes, gremlins sneak into the&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://monooa.github.io/dev/sveltekit-files/dealing-with-errors-during-form-submissions-sveltekit.html"><link rel="alternate" type="application/atom+xml" href="https://monooa.github.io/dev/sveltekit-files/feed.xml"><link rel="alternate" type="application/json" href="https://monooa.github.io/dev/sveltekit-files/feed.json"><meta property="og:title" content="Dealing with errors during form submissions( SvelteKit )."><meta property="og:site_name" content="SvelteKit"><meta property="og:description" content="Forms. They're the lifeblood of user interaction. From logging in to ordering that new gadget you've been eyeing, forms are everywhere. But let's be honest, things don't always go according to plan. Users mistype emails, servers hiccup, and sometimes, just sometimes, gremlins sneak into the&hellip;"><meta property="og:url" content="https://monooa.github.io/dev/sveltekit-files/dealing-with-errors-during-form-submissions-sveltekit.html"><meta property="og:type" content="article"><link rel="preload" href="https://monooa.github.io/dev/sveltekit-files/assets/dynamic/fonts/robotoslab/robotoslab.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="https://monooa.github.io/dev/sveltekit-files/assets/css/style.css?v=11bee19e86e8eda2cf9a60efd975666d"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://monooa.github.io/dev/sveltekit-files/dealing-with-errors-during-form-submissions-sveltekit.html"},"headline":"Dealing with errors during form submissions( SvelteKit ).","datePublished":"2025-03-27T13:34","dateModified":"2025-03-27T13:38","description":"Forms. They're the lifeblood of user interaction. From logging in to ordering that new gadget you've been eyeing, forms are everywhere. But let's be honest, things don't always go according to plan. Users mistype emails, servers hiccup, and sometimes, just sometimes, gremlins sneak into the&hellip;","author":{"@type":"Person","name":"aymen guendez","url":"https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/"},"publisher":{"@type":"Organization","name":"aymen guendez"}}</script><noscript><style>img[loading] {
+                    opacity: 1;
+                }</style></noscript></head><body class="post-template"><header class="top js-header"><a class="logo" href="https://monooa.github.io/dev/sveltekit-files/">SvelteKit</a></header><main class="post"><article class="content"><div class="hero hero--noimage"><header class="hero__content"><div class="wrapper"><h1>Dealing with errors during form submissions( SvelteKit ).</h1><div class="feed__meta content__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T13:34" class="feed__date">March 27, 2025</time></div></div></header></div><div class="entry-wrapper content__entry"><p>Forms. They're the lifeblood of user interaction. From logging in to ordering that new gadget you've been eyeing, forms are everywhere. But let's be honest, things don't always go according to plan. Users mistype emails, servers hiccup, and sometimes, just sometimes, gremlins sneak into the code.</p><p>That's where robust error handling comes in. It's the difference between a frustrated user abandoning your site and a user who feels supported and encouraged to try again. In this blog post, we'll dive into how to gracefully handle errors during form submissions in SvelteKit, ensuring a smooth and user-friendly experience, even when things go wrong.</p><p><strong>The Anatomy of a SvelteKit Form</strong></p><p>Before we tackle errors, let's quickly recap the basic structure of a SvelteKit form. You'll typically have:</p><ul><li><strong>A Svelte component:</strong> This houses your form elements (inputs, textareas, buttons, etc.) and the logic to handle user input.</li><li><strong>A <code>+page.server.ts</code> file:</strong> This is where the server-side magic happens. It defines your form <code>actions</code>, which process the submitted data.</li></ul><p><strong>The Common Culprits: Where Errors Lurk</strong></p><p>Errors during form submissions can arise from various sources:</p><ul><li><strong>Client-side validation:</strong> Incorrect data format (e.g., invalid email, missing required fields).</li><li><strong>Server-side validation:</strong> More complex validation rules, like checking data against a database.</li><li><strong>Server-side errors:</strong> Database connection issues, API failures, or unexpected code exceptions.</li></ul><p><strong>The SvelteKit Way: Handling Errors Gracefully</strong></p><p>SvelteKit provides several mechanisms to deal with these errors:</p><p><strong>1. Client-Side Validation: Preventing Errors Before They Happen</strong></p><p>Client-side validation offers immediate feedback to the user, preventing unnecessary server requests. You can use plain JavaScript, but libraries like <a href="https://github.com/jquense/yup">Yup</a> or <a href="https://github.com/colinhacks/zod">Zod</a> make validation more declarative and maintainable.</p><pre><code class="lang-svelte"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+  <span class="hljs-keyword">import</span> { yupResolver } <span class="hljs-keyword">from</span> <span class="hljs-string">'@hookform/resolvers/yup'</span>;
+  <span class="hljs-keyword">import</span> { useForm } <span class="hljs-keyword">from</span> <span class="hljs-string">'svelte-use-form'</span>;
+  <span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> yup <span class="hljs-keyword">from</span> <span class="hljs-string">'yup'</span>;
+
+  <span class="hljs-keyword">const</span> schema = yup.object().shape({
+    <span class="hljs-attr">email</span>: yup.string().email(<span class="hljs-string">'Invalid email'</span>).required(<span class="hljs-string">'Email is required'</span>),
+    <span class="hljs-attr">password</span>: yup.string().min(<span class="hljs-number">8</span>, <span class="hljs-string">'Password must be at least 8 characters'</span>).required(<span class="hljs-string">'Password is required'</span>),
+  });
+
+  <span class="hljs-keyword">const</span> { form, errors, handleSubmit } = useForm({
+    <span class="hljs-attr">resolver</span>: yupResolver(schema),
+  });
+
+  <span class="hljs-keyword">const</span> onSubmit = <span class="hljs-keyword">async</span> (data) =&gt; {
+    <span class="hljs-comment">// Form is valid, send data to the server</span>
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Form data:'</span>, data);
+    <span class="hljs-comment">// ... Your submission logic here</span>
+  };
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">use:form</span> <span class="hljs-attr">on:submit</span>|<span class="hljs-attr">preventDefault</span>=<span class="hljs-string">{handleSubmit(onSubmit)}</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"email"</span>&gt;</span>Email:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"email"</span> /&gt;</span>
+  {#if $errors.email}
+    <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error"</span>&gt;</span>{$errors.email.message}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+  {/if}
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"password"</span>&gt;</span>Password:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"password"</span> /&gt;</span>
+  {#if $errors.password}
+    <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error"</span>&gt;</span>{$errors.password.message}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+  {/if}
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span>&gt;</span>Submit<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="css">
+  <span class="hljs-selector-class">.error</span> {
+    <span class="hljs-attribute">color</span>: red;
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+</code></pre><p>In this example:</p><ul><li>We use <code>svelte-use-form</code> along with <code>yup</code> for validation.</li><li>The <code>schema</code> defines validation rules for email and password.</li><li>The <code>$errors</code> store contains error messages, which are displayed dynamically.</li></ul><p><strong>2. Server-Side Validation: The Last Line of Defense</strong></p><p>Never rely solely on client-side validation! Always validate data on the server to ensure security and data integrity. This is where your <code>+page.server.ts</code> comes into play.</p><pre><code class="lang-typescript"><span class="hljs-comment">// src/routes/+page.server.ts</span>
+<span class="hljs-keyword">import</span> { fail } from <span class="hljs-string">'@sveltejs/kit'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> actions = {
+  <span class="hljs-keyword">default</span>: <span class="hljs-keyword">async</span> ({ request }) =&gt; {
+    <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> request.formData();
+    <span class="hljs-keyword">const</span> email = data.<span class="hljs-keyword">get</span>(<span class="hljs-string">'email'</span>);
+    <span class="hljs-keyword">const</span> password = data.<span class="hljs-keyword">get</span>(<span class="hljs-string">'password'</span>);
+
+    <span class="hljs-keyword">if</span> (!email) {
+      <span class="hljs-keyword">return</span> fail(<span class="hljs-number">400</span>, { emailMissing: <span class="hljs-keyword">true</span>, message: <span class="hljs-string">'Email is required'</span> });
+    }
+
+    <span class="hljs-keyword">if</span> (typeof email !== <span class="hljs-string">'string'</span> || !email.includes(<span class="hljs-string">'@'</span>)) {
+      <span class="hljs-keyword">return</span> fail(<span class="hljs-number">400</span>, { emailInvalid: <span class="hljs-keyword">true</span>, message: <span class="hljs-string">'Invalid email format'</span> });
+    }
+
+    <span class="hljs-keyword">if</span> (!password) {
+        <span class="hljs-keyword">return</span> fail(<span class="hljs-number">400</span>, { passwordMissing: <span class="hljs-keyword">true</span>, message: <span class="hljs-string">'Password is required'</span> });
+    }
+
+    <span class="hljs-comment">// Here you can add database check and more robust validation logic.</span>
+
+    <span class="hljs-comment">// Simulate a server-side error</span>
+    <span class="hljs-comment">// throw new Error('Something went wrong on the server.');</span>
+
+    <span class="hljs-comment">// If everything is valid, process the data</span>
+    console.log(<span class="hljs-string">'Server-side data processing'</span>, { email, password });
+    <span class="hljs-keyword">return</span> { success: <span class="hljs-keyword">true</span>, message: <span class="hljs-string">'Form submitted successfully!'</span> };
+  },
+};
+</code></pre><ul><li>The <code>fail</code> function is crucial for returning errors. It takes an HTTP status code and a data object, which is then passed back to the client-side component.</li><li>We check for required fields and email format. You can add more complex validation here.</li><li><strong>Important:</strong> We're using <code>fail(400, ...)</code> to send back a 400 Bad Request error. This is good practice for informing the client that their request was invalid.</li><li>The returned data is merged with the existing <code>data</code> prop, making it available in your Svelte component.</li></ul><p><strong>3. Handling Server-Side Errors: Unexpected Hiccups</strong></p><p>Sometimes, things go wrong on the server that you can't anticipate. Wrap your form processing logic in a <code>try...catch</code> block to catch exceptions.</p><pre><code class="lang-typescript"><span class="hljs-comment">// src/routes/+page.server.ts</span>
+<span class="hljs-keyword">import</span> { fail } from <span class="hljs-string">'@sveltejs/kit'</span>;
+
+export <span class="hljs-keyword">const</span> actions = {
+    <span class="hljs-keyword">default</span>: async ({ request }) =&gt; {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">const</span> data = <span class="hljs-function">await request.<span class="hljs-title">formData</span><span class="hljs-params">()</span></span>;
+            <span class="hljs-keyword">const</span> email = data.get(<span class="hljs-string">'email'</span>);
+            <span class="hljs-keyword">const</span> password = data.get(<span class="hljs-string">'password'</span>);
+
+            <span class="hljs-keyword">if</span> (!email) {
+                <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">fail</span><span class="hljs-params">(<span class="hljs-number">400</span>, { emailMissing: <span class="hljs-keyword">true</span>, message: <span class="hljs-string">'Email is required'</span> })</span></span>;
+            }
+
+            <span class="hljs-keyword">if</span> (typeof email !== <span class="hljs-string">'string'</span> || !email.includes(<span class="hljs-string">'@'</span>)) {
+                <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">fail</span><span class="hljs-params">(<span class="hljs-number">400</span>, { emailInvalid: <span class="hljs-keyword">true</span>, message: <span class="hljs-string">'Invalid email format'</span> })</span></span>;
+            }
+
+            <span class="hljs-keyword">if</span> (!password) {
+                <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">fail</span><span class="hljs-params">(<span class="hljs-number">400</span>, { passwordMissing: <span class="hljs-keyword">true</span>, message: <span class="hljs-string">'Password is required'</span> })</span></span>;
+            }
+
+            <span class="hljs-comment">// Here you can add database check and more robust validation logic.</span>
+
+            <span class="hljs-comment">// Simulate a server-side error</span>
+            <span class="hljs-comment">// throw new Error('Something went wrong on the server.');</span>
+
+            <span class="hljs-comment">// If everything is valid, process the data</span>
+            console.log(<span class="hljs-string">'Server-side data processing'</span>, { email, password });
+            <span class="hljs-keyword">return</span> { success: <span class="hljs-keyword">true</span>, message: 'Form submitted successfully!' };
+
+        } <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">error</span>:any) {
+            console.<span class="hljs-keyword">error</span>(<span class="hljs-string">'Server-side error:'</span>, <span class="hljs-keyword">error</span>);
+            <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">fail</span><span class="hljs-params">(<span class="hljs-number">500</span>, { message: <span class="hljs-string">'An unexpected error occurred. Please try again later.'</span> })</span></span>;
+        }
+    },
+};
+</code></pre><p><strong>4. Displaying Errors in Your Svelte Component</strong></p><p>Back in your Svelte component, you can access the error data returned by the server. You'll need to ensure you're using the <code>enhance</code> action from <code>@sveltejs/kit</code> on your form, which automatically handles data updates on form submission.</p><pre><code class="lang-svelte"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+    <span class="hljs-keyword">import</span> { enhance } <span class="hljs-keyword">from</span> <span class="hljs-string">'$app/forms'</span>;
+    <span class="hljs-keyword">import</span> { page } <span class="hljs-keyword">from</span> <span class="hljs-string">'$app/stores'</span>;
+
+    $: emailMissing = $page.data?.emailMissing || <span class="hljs-literal">false</span>;
+    $: emailInvalid = $page.data?.emailInvalid || <span class="hljs-literal">false</span>;
+    $: passwordMissing = $page.data?.passwordMissing || <span class="hljs-literal">false</span>;
+    $: serverErrorMessage = $page.data?.message;
+
+
+    <span class="hljs-keyword">let</span> submitting = <span class="hljs-literal">false</span>;
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"POST"</span> <span class="hljs-attr">use:enhance</span>=<span class="hljs-string">{()</span> =&gt;</span> {
+    submitting = true;
+    return ({ result }) =&gt; {
+        submitting = false;
+    };
+}}&gt;
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"email"</span>&gt;</span>Email:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"email"</span> /&gt;</span>
+    {#if emailMissing}
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error"</span>&gt;</span>Email is required.<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+    {/if}
+    {#if emailInvalid}
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error"</span>&gt;</span>Invalid email format.<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+    {/if}
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"password"</span>&gt;</span>Password:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"password"</span> /&gt;</span>
+    {#if passwordMissing}
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error"</span>&gt;</span>Password is required.<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+    {/if}
+
+    {#if serverErrorMessage}
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error"</span>&gt;</span>{serverErrorMessage}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+    {/if}
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">disabled</span>=<span class="hljs-string">{submitting}</span>&gt;</span>
+      {#if submitting}Submitting...{:else}Submit{/if}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="css">
+  <span class="hljs-selector-class">.error</span> {
+    <span class="hljs-attribute">color</span>: red;
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+</code></pre><ul><li>We import <code>enhance</code> from <code>$app/forms</code> and apply it to the <code>&lt;form&gt;</code> element. This function manages the form submission, including updating the <code>page</code> store with the server's response.</li><li>We access the error data from the <code>$page.data</code> store. Notice the use of the optional chaining operator (<code>?.</code>) to prevent errors if the data isn't present.</li><li>We conditionally render error messages based on the flags received from the server.</li><li>We use a <code>submitting</code> flag to disable the button during form submission, improving the user experience.</li></ul><p><strong>Best Practices for Error Handling in SvelteKit Forms:</strong></p><ul><li><strong>Prioritize User Experience:</strong> Provide clear and helpful error messages. Avoid technical jargon. Tell the user <em>what</em> went wrong and, ideally, <em>how</em> to fix it.</li><li><strong>Client-Side First:</strong> Implement client-side validation to catch common errors quickly.</li><li><strong>Server-Side is King:</strong> Always validate data on the server to ensure security and data integrity.</li><li><strong>Handle Exceptions:</strong> Use <code>try...catch</code> blocks to gracefully handle unexpected server-side errors.</li><li><strong>Use the <code>fail</code> Function:</strong> SvelteKit's <code>fail</code> function is your best friend for returning errors from your server actions.</li><li><strong>Log Errors:</strong> Log server-side errors for debugging and monitoring.</li><li><strong>Test Thoroughly:</strong> Test your forms with different types of input and simulate server errors to ensure your error handling is robust.</li><li><strong>Show a Loading state</strong>: Disable the button while the form is submitting to prevent double-clicking.</li></ul><p><strong>Conclusion</strong></p><p>Handling errors effectively is paramount for creating a positive user experience. By implementing client-side validation, robust server-side logic, and clear error messages, you can ensure that your SvelteKit forms are resilient and user-friendly, even when things don't go according to plan. So go forth, build amazing forms, and remember, a little error handling goes a long way!</p><p><strong>Related Posts</strong></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/debugging-errors-related-to-route-parameters-sveltekit.html">Debugging errors related to route parameters( SvelteKit ).</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/dealing-with-errors-during-form-submissions-sveltekit.html">Dealing with errors during form submissions( SvelteKit ).</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/handling-errors-when-fetching-data-in-load-functions.html">Handling errors when fetching data in load functions.</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/troubleshooting-404-not-found-errors-in-sveltekit.html">Troubleshooting "404 Not Found" errors in SvelteKit.</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/debugging-memory-leaks-in-sveltekit-applications.html">Debugging memory leaks in SvelteKit applications.</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/the-importance-of-validating-data-on-both-the-client-and-server.html">The importance of validating data on both the client and server.</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/using-environment-variables-correctly-to-avoid-configuration-errors.html">Using environment variables correctly to avoid configuration errors.</a></p></div><footer class="content__footer"><div class="entry-wrapper"><p class="content__updated">[MISSING TRANSLATION] March 27, 2025</p><div class="content__actions"><div class="content__share"><button class="btn--icon content__share-button js-content__share-button"><svg width="20" height="20" aria-hidden="true"><use xlink:href="https://monooa.github.io/dev/sveltekit-files/assets/svg/svg-map.svg#share"></use></svg> <span>[MISSING TRANSLATION]</span></button><div class="content__share-popup js-content__share-popup"></div></div></div><div class="content__bio bio"><div><h3 class="h4 bio__name"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" rel="author">aymen guendez</a></h3></div></div></div><nav class="content__nav"><div class="wrapper"><div class="content__nav-inner"><div class="content__nav-prev"><a href="https://monooa.github.io/dev/sveltekit-files/handling-errors-when-fetching-data-in-load-functions-sveltekit.html" class="content__nav-link" rel="prev"><div><span>[MISSING TRANSLATION]</span> Handling errors when fetching data in load functions( SvelteKit ).</div></a></div><div class="content__nav-next"><a href="https://monooa.github.io/dev/sveltekit-files/debugging-errors-related-to-route-parameters-sveltekit.html" class="content__nav-link" rel="next"><div><span>[MISSING TRANSLATION]</span> Debugging errors related to route parameters( SvelteKit ).</div></a></div></div></div></nav></footer></article><div class="content__related related"><div class="wrapper"><h2 class="h4 related__title">[MISSING TRANSLATION]</h2><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:15" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/understanding-and-fixing-referenceerror-window-is-not-defined-errors.html">Understanding and fixing &quot;ReferenceError: window is not defined&quot; errors.</a></h3></header><p>Ah, the dreaded "ReferenceError: window is not defined" error. If you're a JavaScript developer dabbling in server-side rendering (SSR), Node.js, or modern JavaScript frameworks like React, Next.js, or Vue, you've likely encountered this beast. It can appear seemingly out of nowhere, leaving you scratching your&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/understanding-and-fixing-referenceerror-window-is-not-defined-errors.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:06" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/using-browser-developer-tools-to-debug-sveltekit-applications.html">Using browser developer tools to debug SvelteKit applications.</a></h3></header><p>SvelteKit is a fantastic framework for building blazing-fast web applications. Its simplicity and power are undeniable, but even the best code can sometimes run into unexpected issues. That's where the trusty browser developer tools come to the rescue! This post will guide you through effectively&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/using-browser-developer-tools-to-debug-sveltekit-applications.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:00" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/common-causes-of-hydration-errors-and-how-to-fix-them.html">Common causes of hydration errors and how to fix them.</a></h3></header><p>Ah, the dreaded hydration error. As a React developer, you've probably encountered it at some point. That cryptic message in your console, warning you about inconsistencies between server-rendered and client-rendered output, can be a real headache. But fear not! While frustrating, hydration errors are often&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/common-causes-of-hydration-errors-and-how-to-fix-them.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article></div></div></main><footer class="footer footer--glued"><div class="wrapper"><div class="footer__copyright"><p>Powered by Publii</p></div><button id="backToTop" class="footer__bttop" aria-label="[MISSING TRANSLATION]" title="[MISSING TRANSLATION]"><svg width="20" height="20"><use xlink:href="https://monooa.github.io/dev/sveltekit-files/assets/svg/svg-map.svg#toparrow"/></svg></button></div></footer><script defer="defer" src="https://monooa.github.io/dev/sveltekit-files/assets/js/scripts.min.js?v=700105c316933a8202041b6415abb233"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'sidebar',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:true,relatedContainerForOverlayMenuSelector:'.top'};</script><script>var images = document.querySelectorAll('img[loading]');
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].complete) {
+                images[i].classList.add('is-loaded');
+            } else {
+                images[i].addEventListener('load', function () {
+                    this.classList.add('is-loaded');
+                }, false);
+            }
+        }</script></body></html>

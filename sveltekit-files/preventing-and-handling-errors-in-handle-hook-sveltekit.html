@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang="en-gb"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Preventing and handling errors in handle hook( SvelteKit ). - SvelteKit</title><meta name="description" content="The handle hook in SvelteKit is your gatekeeper, intercepting every request and allowing you to modify the response. It's incredibly powerful, but with great power comes great responsibility... specifically, the responsibility of handling errors gracefully. Letting errors bubble up unchecked can lead to a poor user experience,&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://monooa.github.io/dev/sveltekit-files/preventing-and-handling-errors-in-handle-hook-sveltekit.html"><link rel="alternate" type="application/atom+xml" href="https://monooa.github.io/dev/sveltekit-files/feed.xml"><link rel="alternate" type="application/json" href="https://monooa.github.io/dev/sveltekit-files/feed.json"><meta property="og:title" content="Preventing and handling errors in handle hook( SvelteKit )."><meta property="og:site_name" content="SvelteKit"><meta property="og:description" content="The handle hook in SvelteKit is your gatekeeper, intercepting every request and allowing you to modify the response. It's incredibly powerful, but with great power comes great responsibility... specifically, the responsibility of handling errors gracefully. Letting errors bubble up unchecked can lead to a poor user experience,&hellip;"><meta property="og:url" content="https://monooa.github.io/dev/sveltekit-files/preventing-and-handling-errors-in-handle-hook-sveltekit.html"><meta property="og:type" content="article"><link rel="preload" href="https://monooa.github.io/dev/sveltekit-files/assets/dynamic/fonts/robotoslab/robotoslab.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="https://monooa.github.io/dev/sveltekit-files/assets/css/style.css?v=11bee19e86e8eda2cf9a60efd975666d"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://monooa.github.io/dev/sveltekit-files/preventing-and-handling-errors-in-handle-hook-sveltekit.html"},"headline":"Preventing and handling errors in handle hook( SvelteKit ).","datePublished":"2025-03-27T14:24","dateModified":"2025-03-27T14:24","description":"The handle hook in SvelteKit is your gatekeeper, intercepting every request and allowing you to modify the response. It's incredibly powerful, but with great power comes great responsibility... specifically, the responsibility of handling errors gracefully. Letting errors bubble up unchecked can lead to a poor user experience,&hellip;","author":{"@type":"Person","name":"aymen guendez","url":"https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/"},"publisher":{"@type":"Organization","name":"aymen guendez"}}</script><noscript><style>img[loading] {
+                    opacity: 1;
+                }</style></noscript></head><body class="post-template"><header class="top js-header"><a class="logo" href="https://monooa.github.io/dev/sveltekit-files/">SvelteKit</a></header><main class="post"><article class="content"><div class="hero hero--noimage"><header class="hero__content"><div class="wrapper"><h1>Preventing and handling errors in handle hook( SvelteKit ).</h1><div class="feed__meta content__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T14:24" class="feed__date">March 27, 2025</time></div></div></header></div><div class="entry-wrapper content__entry"><p>The <code>handle</code> hook in SvelteKit is your gatekeeper, intercepting every request and allowing you to modify the response. It's incredibly powerful, but with great power comes great responsibility... specifically, the responsibility of handling errors gracefully. Letting errors bubble up unchecked can lead to a poor user experience, broken pages, and cryptic server logs.</p><p>This post will equip you with the knowledge and techniques to prevent and handle errors effectively within your SvelteKit <code>handle</code> hook.</p><p><strong>Why Error Handling in <code>handle</code> Matters</strong></p><p>The <code>handle</code> hook runs on the server (or edge runtime, depending on your configuration) <em>before</em> your components even start to render. This means it's responsible for:</p><ul><li><strong>Authentication &amp; Authorization:</strong> Checking if the user is allowed to access a route.</li><li><strong>Data Fetching:</strong> Fetching initial data needed for the page.</li><li><strong>Session Management:</strong> Reading and setting session cookies.</li><li><strong>Redirects:</strong> Redirecting users based on specific conditions.</li><li><strong>Response Modification:</strong> Adding headers, setting cookies, etc.</li></ul><p>If any of these steps fail, the user might see a blank page, an unexpected redirect, or simply an error message. Proper error handling ensures a smoother and more predictable experience.</p><p><strong>Common Error Scenarios in <code>handle</code></strong></p><p>Let's look at some typical scenarios where errors might occur within your <code>handle</code> hook:</p><ul><li><strong>Database Connection Issues:</strong> The database might be down or unreachable.</li><li><strong>API Errors:</strong> External APIs you're calling might return errors.</li><li><strong>Authentication Failures:</strong> Invalid credentials or session expirations.</li><li><strong>Authorization Issues:</strong> The user might not have permission to access a resource.</li><li><strong>Parsing Errors:</strong> Errors when parsing JSON or other data formats.</li><li><strong>Internal Server Errors:</strong> Bugs in your own code!</li></ul><p><strong>Preventing Errors: A Proactive Approach</strong></p><p>Prevention is always better than cure. Here are some best practices to minimize errors in your <code>handle</code> hook:</p><ul><li><p><strong>Validation, Validation, Validation:</strong> Validate all incoming data, including cookies, headers, and request parameters. Use a library like Zod or Yup to define schemas and ensure data integrity.</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+<span class="hljs-keyword">import</span> { z } from <span class="hljs-string">'zod'</span>;
+
+export <span class="hljs-keyword">const</span> handle = async ({ event, resolve }) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> cookieSchema = z.object({
+      userId: z.string().uuid(),
+    });
+
+    <span class="hljs-keyword">const</span> parsedCookies = cookieSchema.safeParse(event.cookies.getAll());
+
+    <span class="hljs-keyword">if</span> (!parsedCookies.success) {
+      console.<span class="hljs-keyword">error</span>(<span class="hljs-string">"Invalid Cookies:"</span>, parsedCookies.<span class="hljs-keyword">error</span>.message);
+      <span class="hljs-comment">// Handle invalid cookies (e.g., clear them, redirect to login)</span>
+      event.cookies.delete(<span class="hljs-string">'userId'</span>);
+      <span class="hljs-function"><span class="hljs-keyword">return</span> Response.<span class="hljs-title">redirect</span><span class="hljs-params">(<span class="hljs-string">'/login'</span>, <span class="hljs-number">302</span>)</span></span>;
+    }
+
+    <span class="hljs-comment">// Access validated data</span>
+    <span class="hljs-keyword">const</span> userId = parsedCookies.data.userId;
+    event.locals.user = <span class="hljs-function">await <span class="hljs-title">getUser</span><span class="hljs-params">(userId)</span></span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">resolve</span><span class="hljs-params">(event)</span></span>;
+
+  } <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">error</span>) {
+    console.<span class="hljs-keyword">error</span>(<span class="hljs-string">"Error in handle hook:"</span>, <span class="hljs-keyword">error</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Response(<span class="hljs-string">'Internal Server Error'</span>, { status: 500 });
+  }
+};
+</code></pre></li><li><p><strong>Environment Variable Checks:</strong> Ensure all required environment variables are set before your application starts. Fail fast and early if they're missing.</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+<span class="hljs-keyword">const</span> DATABASE_URL = <span class="hljs-built_in">process</span>.env.DATABASE_URL;
+
+<span class="hljs-built_in">if</span> (!DATABASE_URL) {
+  console.error(<span class="hljs-string">"DATABASE_URL environment variable is not set!"</span>);
+  <span class="hljs-built_in">process</span>.exit(<span class="hljs-number">1</span>); <span class="hljs-comment">// Exit the process if the required variable is missing</span>
+}
+</code></pre></li><li><p><strong>Retry Mechanisms:</strong> For external API calls or database connections, implement retry mechanisms with exponential backoff. This can help handle transient network issues or temporary server unavailability. Libraries like <code>p-retry</code> can simplify this.</p></li><li><p><strong>Idempotent Operations:</strong> If your <code>handle</code> hook performs operations that modify data, strive for idempotency. This means that if the same request is processed multiple times, it should have the same effect as processing it once. This is especially important when dealing with network issues or retries.</p></li></ul><p><strong>Handling Errors: A Graceful Recovery</strong></p><p>Even with the best prevention efforts, errors can still occur. Here's how to handle them gracefully in your <code>handle</code> hook:</p><ul><li><p><strong><code>try...catch</code> Blocks:</strong> Wrap potentially error-prone code within <code>try...catch</code> blocks. This allows you to catch exceptions and handle them appropriately.</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+export <span class="hljs-keyword">const</span> handle = async ({ event, resolve }) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-comment">// Your code that might throw an error</span>
+    <span class="hljs-keyword">const</span> response = <span class="hljs-function">await <span class="hljs-title">resolve</span><span class="hljs-params">(event)</span></span>;
+    <span class="hljs-keyword">return</span> response;
+  } <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">error</span>) {
+    console.<span class="hljs-keyword">error</span>(<span class="hljs-string">"Error in handle hook:"</span>, <span class="hljs-keyword">error</span>);
+    <span class="hljs-comment">// Handle the error (see options below)</span>
+  }
+};
+</code></pre></li><li><p><strong>Return a <code>Response</code> Object:</strong> Crucially, your <code>handle</code> hook <em>must</em> return a <code>Response</code> object, even when an error occurs. This allows you to control the HTTP status code, headers, and body of the response.</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+export <span class="hljs-keyword">const</span> handle = async ({ event, resolve }) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> response = <span class="hljs-function">await <span class="hljs-title">resolve</span><span class="hljs-params">(event)</span></span>;
+    <span class="hljs-keyword">return</span> response;
+  } <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">error</span>) {
+    console.<span class="hljs-keyword">error</span>(<span class="hljs-string">"Error in handle hook:"</span>, <span class="hljs-keyword">error</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Response(<span class="hljs-string">'Internal Server Error'</span>, { status: 500 });
+  }
+};
+</code></pre></li><li><p><strong>Custom Error Pages:</strong> Redirect users to a custom error page for specific error codes (e.g., 404, 500). SvelteKit's <code>src/routes/+error.svelte</code> and <code>src/routes/+error.svelte/+page.svelte</code> allow you to create these custom pages.</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+<span class="hljs-keyword">import</span> { error } <span class="hljs-keyword">from</span> <span class="hljs-string">'@sveltejs/kit'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> handle = <span class="hljs-keyword">async</span> ({ event, resolve }) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> resolve(event);
+    <span class="hljs-keyword">return</span> response;
+  } <span class="hljs-keyword">catch</span> (e) {
+    <span class="hljs-built_in">console</span>.error(<span class="hljs-string">"Error in handle hook:"</span>, e);
+    <span class="hljs-comment">// Use SvelteKit's `error` function to throw a structured error</span>
+    <span class="hljs-keyword">throw</span> error(<span class="hljs-number">500</span>, <span class="hljs-string">'Internal Server Error'</span>);
+  }
+};
+</code></pre><p><strong>Why use <code>throw error</code> instead of <code>new Response</code> with status code?</strong></p><ul><li><code>throw error(500, 'Internal Server Error')</code> leverages SvelteKit's error handling mechanism for rendering the error page using <code>+error.svelte</code>. The error object is passed to the error page for display.</li><li><code>new Response('Internal Server Error', { status: 500 })</code> skips the SvelteKit error handling and directly returns a plain HTML response with the specified status code. This response won't be styled by <code>+error.svelte</code> and won't provide additional error details.</li></ul></li><li><p><strong>Logging:</strong> Log errors to a file or a dedicated logging service (like Sentry or Honeybadger). Include relevant information like the request URL, headers, user ID, and the error message and stack trace. This is crucial for debugging and identifying patterns in your application's behavior.</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Sentry <span class="hljs-keyword">from</span> <span class="hljs-string">'@sentry/node'</span>;
+
+Sentry.init({
+  <span class="hljs-attr">dsn</span>: <span class="hljs-string">'YOUR_SENTRY_DSN'</span>, <span class="hljs-comment">// Replace with your Sentry DSN</span>
+  tracesSampleRate: <span class="hljs-number">1.0</span>, <span class="hljs-comment">// Adjust as needed</span>
+});
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> handle = <span class="hljs-keyword">async</span> ({ event, resolve }) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> resolve(event);
+    <span class="hljs-keyword">return</span> response;
+  } <span class="hljs-keyword">catch</span> (error) {
+    Sentry.captureException(error);
+    <span class="hljs-built_in">console</span>.error(<span class="hljs-string">"Error in handle hook:"</span>, error);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Response(<span class="hljs-string">'Internal Server Error'</span>, { <span class="hljs-attr">status</span>: <span class="hljs-number">500</span> });
+  }
+};
+</code></pre></li><li><p><strong>Specific Error Handling:</strong> Handle different error types differently. For example, a 401 Unauthorized error might require a redirect to the login page, while a 500 Internal Server Error might warrant a generic error message.</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+export <span class="hljs-keyword">const</span> handle = <span class="hljs-keyword">async</span> ({ <span class="hljs-keyword">event</span>, resolve }) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-comment">// Authenticate user</span>
+    <span class="hljs-keyword">const</span> user = <span class="hljs-keyword">await</span> authenticate(<span class="hljs-keyword">event</span>.cookies.<span class="hljs-keyword">get</span>(<span class="hljs-string">'sessionid'</span>));
+
+    <span class="hljs-keyword">if</span> (!user) {
+      <span class="hljs-keyword">return</span> Response.redirect(<span class="hljs-string">'/login'</span>, <span class="hljs-number">302</span>);
+    }
+
+    <span class="hljs-keyword">event</span>.locals.user = user; <span class="hljs-comment">// Attach user to event.locals</span>
+
+    <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> resolve(<span class="hljs-keyword">event</span>);
+    <span class="hljs-keyword">return</span> response;
+  } <span class="hljs-keyword">catch</span> (error) {
+    console.error(<span class="hljs-string">"Authentication error:"</span>, error);
+
+    <span class="hljs-keyword">if</span> (error.message === <span class="hljs-string">'Invalid credentials'</span>) {
+      <span class="hljs-keyword">return</span> Response.redirect(<span class="hljs-string">'/login?error=invalid_credentials'</span>, <span class="hljs-number">302</span>);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Response(<span class="hljs-string">'Authentication failed'</span>, { status: <span class="hljs-number">401</span> }); <span class="hljs-comment">//Explicitly send a 401 response</span>
+    }
+  }
+};
+</code></pre></li></ul><p><strong>Example: Handling Authentication Errors</strong></p><p>Let's say your <code>handle</code> hook is responsible for authenticating users based on a session cookie. Here's an example of how to handle authentication errors:</p><pre><code class="lang-javascript"><span class="hljs-comment">// src/hooks.server.js</span>
+import { authenticate } <span class="hljs-keyword">from</span> <span class="hljs-string">'$lib/server/auth'</span>; <span class="hljs-comment">// Assuming you have an authentication function</span>
+
+export <span class="hljs-keyword">const</span> handle = <span class="hljs-keyword">async</span> ({ <span class="hljs-keyword">event</span>, resolve }) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> sessionid = <span class="hljs-keyword">event</span>.cookies.<span class="hljs-keyword">get</span>(<span class="hljs-string">'sessionid'</span>);
+
+    <span class="hljs-keyword">if</span> (sessionid) {
+      <span class="hljs-keyword">const</span> user = <span class="hljs-keyword">await</span> authenticate(sessionid);
+      <span class="hljs-keyword">if</span> (user) {
+        <span class="hljs-keyword">event</span>.locals.user = user;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// Invalid session. Clear the cookie and redirect to login</span>
+        <span class="hljs-keyword">event</span>.cookies.delete(<span class="hljs-string">'sessionid'</span>);
+        <span class="hljs-keyword">return</span> Response.redirect(<span class="hljs-string">'/login'</span>, <span class="hljs-number">302</span>);
+      }
+    }
+
+    <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> resolve(<span class="hljs-keyword">event</span>);
+    <span class="hljs-keyword">return</span> response;
+
+  } <span class="hljs-keyword">catch</span> (error) {
+    console.error(<span class="hljs-string">"Authentication error:"</span>, error);
+    <span class="hljs-comment">// Log the error to a logging service (e.g., Sentry)</span>
+    <span class="hljs-comment">// Sentry.captureException(error); // Uncomment when Sentry is set up</span>
+
+    <span class="hljs-comment">// For production, avoid exposing sensitive error details to the client</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Response(<span class="hljs-string">'Authentication failed'</span>, { status: <span class="hljs-number">500</span> });
+  }
+};
+</code></pre><p><strong>Key Takeaways</strong></p><ul><li><strong>Prioritize Prevention:</strong> Use validation, environment variable checks, and retry mechanisms to minimize errors.</li><li><strong>Wrap in <code>try...catch</code>:</strong> Protect your code with <code>try...catch</code> blocks to handle exceptions gracefully.</li><li><strong>Always Return a <code>Response</code>:</strong> Ensure your <code>handle</code> hook always returns a <code>Response</code> object, even in error cases. Prefer <code>throw error(500, 'message')</code> to use SvelteKit's error rendering.</li><li><strong>Log Errors:</strong> Log errors to a file or logging service for debugging and analysis.</li><li><strong>Provide a Good User Experience:</strong> Redirect users to custom error pages or display informative error messages.</li><li><strong>Specific Handling:</strong> Treat different types of errors differently to provide the most appropriate response.</li></ul><p>By following these practices, you can make your SvelteKit <code>handle</code> hook a robust and reliable component of your application, providing a better experience for your users and making your life as a developer much easier. Happy coding!</p></div><footer class="content__footer"><div class="entry-wrapper"><p class="content__updated">[MISSING TRANSLATION] March 27, 2025</p><div class="content__actions"><div class="content__share"><button class="btn--icon content__share-button js-content__share-button"><svg width="20" height="20" aria-hidden="true"><use xlink:href="https://monooa.github.io/dev/sveltekit-files/assets/svg/svg-map.svg#share"></use></svg> <span>[MISSING TRANSLATION]</span></button><div class="content__share-popup js-content__share-popup"></div></div></div><div class="content__bio bio"><div><h3 class="h4 bio__name"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" rel="author">aymen guendez</a></h3></div></div></div><nav class="content__nav"><div class="wrapper"><div class="content__nav-inner"><div class="content__nav-prev"><a href="https://monooa.github.io/dev/sveltekit-files/debugging-issues-with-route-grouping-sveltekit.html" class="content__nav-link" rel="prev"><div><span>[MISSING TRANSLATION]</span> Debugging issues with route grouping( SvelteKit ).</div></a></div><div class="content__nav-next"><a href="https://monooa.github.io/dev/sveltekit-files/troubleshooting-errors-related-to-endpoint-matching-sveltekit.html" class="content__nav-link" rel="next"><div><span>[MISSING TRANSLATION]</span> Troubleshooting errors related to endpoint matching( SvelteKit ).</div></a></div></div></div></nav></footer></article><div class="content__related related"><div class="wrapper"><h2 class="h4 related__title">[MISSING TRANSLATION]</h2><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:15" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/understanding-and-fixing-referenceerror-window-is-not-defined-errors.html">Understanding and fixing &quot;ReferenceError: window is not defined&quot; errors.</a></h3></header><p>Ah, the dreaded "ReferenceError: window is not defined" error. If you're a JavaScript developer dabbling in server-side rendering (SSR), Node.js, or modern JavaScript frameworks like React, Next.js, or Vue, you've likely encountered this beast. It can appear seemingly out of nowhere, leaving you scratching your&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/understanding-and-fixing-referenceerror-window-is-not-defined-errors.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:06" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/using-browser-developer-tools-to-debug-sveltekit-applications.html">Using browser developer tools to debug SvelteKit applications.</a></h3></header><p>SvelteKit is a fantastic framework for building blazing-fast web applications. Its simplicity and power are undeniable, but even the best code can sometimes run into unexpected issues. That's where the trusty browser developer tools come to the rescue! This post will guide you through effectively&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/using-browser-developer-tools-to-debug-sveltekit-applications.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:00" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/common-causes-of-hydration-errors-and-how-to-fix-them.html">Common causes of hydration errors and how to fix them.</a></h3></header><p>Ah, the dreaded hydration error. As a React developer, you've probably encountered it at some point. That cryptic message in your console, warning you about inconsistencies between server-rendered and client-rendered output, can be a real headache. But fear not! While frustrating, hydration errors are often&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/common-causes-of-hydration-errors-and-how-to-fix-them.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article></div></div></main><footer class="footer footer--glued"><div class="wrapper"><div class="footer__copyright"><p>Powered by Publii</p></div><button id="backToTop" class="footer__bttop" aria-label="[MISSING TRANSLATION]" title="[MISSING TRANSLATION]"><svg width="20" height="20"><use xlink:href="https://monooa.github.io/dev/sveltekit-files/assets/svg/svg-map.svg#toparrow"/></svg></button></div></footer><script defer="defer" src="https://monooa.github.io/dev/sveltekit-files/assets/js/scripts.min.js?v=700105c316933a8202041b6415abb233"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'sidebar',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:true,relatedContainerForOverlayMenuSelector:'.top'};</script><script>var images = document.querySelectorAll('img[loading]');
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].complete) {
+                images[i].classList.add('is-loaded');
+            } else {
+                images[i].addEventListener('load', function () {
+                    this.classList.add('is-loaded');
+                }, false);
+            }
+        }</script></body></html>

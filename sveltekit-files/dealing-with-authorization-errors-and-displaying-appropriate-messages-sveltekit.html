@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="en-gb"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dealing with authorization errors and displaying appropriate messages( SvelteKit ). - SvelteKit</title><meta name="description" content="Authorization errors. Those pesky 403 Forbidden messages that stand between your users and the content they crave. They're a necessary evil in web development, ensuring data security and user privacy. But a generic error page isn't enough. In this post, we'll explore how to effectively&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://monooa.github.io/dev/sveltekit-files/dealing-with-authorization-errors-and-displaying-appropriate-messages-sveltekit.html"><link rel="alternate" type="application/atom+xml" href="https://monooa.github.io/dev/sveltekit-files/feed.xml"><link rel="alternate" type="application/json" href="https://monooa.github.io/dev/sveltekit-files/feed.json"><meta property="og:title" content="Dealing with authorization errors and displaying appropriate messages( SvelteKit )."><meta property="og:site_name" content="SvelteKit"><meta property="og:description" content="Authorization errors. Those pesky 403 Forbidden messages that stand between your users and the content they crave. They're a necessary evil in web development, ensuring data security and user privacy. But a generic error page isn't enough. In this post, we'll explore how to effectively&hellip;"><meta property="og:url" content="https://monooa.github.io/dev/sveltekit-files/dealing-with-authorization-errors-and-displaying-appropriate-messages-sveltekit.html"><meta property="og:type" content="article"><link rel="preload" href="https://monooa.github.io/dev/sveltekit-files/assets/dynamic/fonts/robotoslab/robotoslab.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="https://monooa.github.io/dev/sveltekit-files/assets/css/style.css?v=11bee19e86e8eda2cf9a60efd975666d"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://monooa.github.io/dev/sveltekit-files/dealing-with-authorization-errors-and-displaying-appropriate-messages-sveltekit.html"},"headline":"Dealing with authorization errors and displaying appropriate messages( SvelteKit ).","datePublished":"2025-03-27T13:53","dateModified":"2025-03-27T14:05","description":"Authorization errors. Those pesky 403 Forbidden messages that stand between your users and the content they crave. They're a necessary evil in web development, ensuring data security and user privacy. But a generic error page isn't enough. In this post, we'll explore how to effectively&hellip;","author":{"@type":"Person","name":"aymen guendez","url":"https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/"},"publisher":{"@type":"Organization","name":"aymen guendez"}}</script><noscript><style>img[loading] {
+                    opacity: 1;
+                }</style></noscript></head><body class="post-template"><header class="top js-header"><a class="logo" href="https://monooa.github.io/dev/sveltekit-files/">SvelteKit</a></header><main class="post"><article class="content"><div class="hero hero--noimage"><header class="hero__content"><div class="wrapper"><h1>Dealing with authorization errors and displaying appropriate messages( SvelteKit ).</h1><div class="feed__meta content__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T13:53" class="feed__date">March 27, 2025</time></div></div></header></div><div class="entry-wrapper content__entry"><p>Authorization errors. Those pesky 403 Forbidden messages that stand between your users and the content they crave. They're a necessary evil in web development, ensuring data security and user privacy. But a generic error page isn't enough. In this post, we'll explore how to effectively handle authorization errors in your SvelteKit application, providing informative and user-friendly experiences.</p><p><strong>Understanding the Players</strong></p><p>Before diving into the code, let's understand the context. We're talking about scenarios where a user tries to access a resource or perform an action they're not authorized to do. This typically arises from:</p><ul><li><strong>Role-Based Access Control (RBAC):</strong> Users belong to specific roles (e.g., admin, editor, viewer) with corresponding permissions.</li><li><strong>Ownership:</strong> A user might only be allowed to modify resources they created.</li><li><strong>Specific Conditions:</strong> Access might depend on the state of the application or a user's subscription status.</li></ul><p><strong>The Core Principle: Secure Your Backend First</strong></p><p>The foundation of any authorization strategy lies in your backend. This is <em>not</em> something to handle solely on the client-side! Client-side checks are easily bypassed and should be treated as mere convenience.</p><ul><li><strong>Secure API Endpoints:</strong> Your API routes (SvelteKit <code>+server.ts</code> files) should be the ultimate gatekeepers. Verify the user's authorization before performing any sensitive operations.</li><li><strong>Return Appropriate Status Codes:</strong> Use HTTP status codes to signal the type of error. Specifically, <strong>403 Forbidden</strong> is the perfect candidate for authorization failures.</li></ul><p><strong>Example Backend (SvelteKit <code>+server.ts</code>)</strong></p><p>Let's say we have an endpoint to delete a post, and only admins are allowed to do this:</p><pre><code class="lang-typescript"><span class="hljs-comment">// src/routes/api/posts/[id]/+server.ts</span>
+<span class="hljs-keyword">import</span> { json, error } <span class="hljs-keyword">from</span> <span class="hljs-string">'@sveltejs/kit'</span>;
+<span class="hljs-keyword">import</span> { getUserRole, deletePost } <span class="hljs-keyword">from</span> <span class="hljs-string">'$lib/server/db'</span>; <span class="hljs-comment">// Replace with your logic</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">DELETE</span>(<span class="hljs-params">{ params, locals }</span>) </span>{
+  <span class="hljs-keyword">const</span> postId = params.id;
+  <span class="hljs-keyword">const</span> user = locals.user; <span class="hljs-comment">// Assuming you have user data in locals</span>
+
+  <span class="hljs-keyword">if</span> (!user) {
+    <span class="hljs-keyword">throw</span> error(<span class="hljs-number">401</span>, <span class="hljs-string">'Unauthorized'</span>); <span class="hljs-comment">// User not logged in</span>
+  }
+
+  <span class="hljs-keyword">const</span> userRole = <span class="hljs-keyword">await</span> getUserRole(user.id); <span class="hljs-comment">// Fetch user's role</span>
+
+  <span class="hljs-keyword">if</span> (userRole !== <span class="hljs-string">'admin'</span>) {
+    <span class="hljs-keyword">throw</span> error(<span class="hljs-number">403</span>, <span class="hljs-string">'Forbidden'</span>); <span class="hljs-comment">// User is not an admin</span>
+  }
+
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">await</span> deletePost(postId);
+    <span class="hljs-keyword">return</span> json({ <span class="hljs-attr">success</span>: <span class="hljs-literal">true</span> });
+  } <span class="hljs-keyword">catch</span> (err) {
+    <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error deleting post:'</span>, err);
+    <span class="hljs-keyword">throw</span> error(<span class="hljs-number">500</span>, <span class="hljs-string">'Failed to delete post'</span>);
+  }
+}
+</code></pre><p><strong>Explanation:</strong></p><ol><li><strong><code>locals</code>:</strong> This snippet assumes you're using SvelteKit's <code>handle</code> hook (<code>src/hooks.server.ts</code>) to authenticate the user and store user information in <code>locals</code>. This is a common and recommended practice.</li><li><strong><code>getUserRole</code>:</strong> This is a placeholder for a function that retrieves the user's role from your database or authentication system.</li><li><strong><code>error(403, 'Forbidden')</code>:</strong> This crucial line throws a SvelteKit <code>error</code> with a 403 status code and an optional message. SvelteKit will handle this error and render the appropriate error page.</li></ol><p><strong>Handling 403 Errors in Your SvelteKit App</strong></p><p>Now, let's focus on displaying a user-friendly message when a 403 error occurs.</p><p><strong>1. The <code>+error.svelte</code> Page:</strong></p><p>SvelteKit provides a special <code>+error.svelte</code> page within a directory to handle errors that occur in that directory and its subdirectories. If you want a global error handler, place it in <code>src/routes/+error.svelte</code>.</p><pre><code class="lang-svelte"><span class="hljs-comment">&lt;!-- src/routes/+error.svelte --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"ts"</span>&gt;</span><span class="javascript">
+  <span class="hljs-keyword">import</span> { page } <span class="hljs-keyword">from</span> <span class="hljs-string">'$app/stores'</span>;
+
+  <span class="hljs-keyword">export</span> <span class="hljs-keyword">let</span> data;
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">svelte:head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>{data.status} {data.error?.message}<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">svelte:head</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error-container"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>{data.status}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"message"</span>&gt;</span>
+    {#if data.status === 403}
+      You do not have permission to access this resource.  Please contact an administrator if you believe this is an error.
+    {:else if data.status === 404}
+      Oops!  Page not found.
+    {:else}
+      {data.error?.message || 'An unexpected error occurred.'}
+    {/if}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/"</span>&gt;</span>Go back home<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="css">
+  <span class="hljs-selector-class">.error-container</span> {
+    <span class="hljs-attribute">text-align</span>: center;
+    <span class="hljs-attribute">padding</span>: <span class="hljs-number">2rem</span>;
+    <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-number">#ccc</span>;
+    <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">8px</span>;
+    <span class="hljs-attribute">margin</span>: <span class="hljs-number">2rem</span> auto;
+    <span class="hljs-attribute">max-width</span>: <span class="hljs-number">600px</span>;
+  }
+
+  <span class="hljs-selector-tag">h1</span> {
+    <span class="hljs-attribute">font-size</span>: <span class="hljs-number">3rem</span>;
+    <span class="hljs-attribute">margin-bottom</span>: <span class="hljs-number">1rem</span>;
+  }
+
+  <span class="hljs-selector-class">.message</span> {
+    <span class="hljs-attribute">font-size</span>: <span class="hljs-number">1.2rem</span>;
+    <span class="hljs-attribute">color</span>: <span class="hljs-number">#555</span>;
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+</code></pre><p><strong>Explanation:</strong></p><ul><li><strong><code>data</code>:</strong> The <code>data</code> prop contains information about the error, including the <code>status</code> code (e.g., 403, 404, 500) and the <code>error</code> object, which may have a <code>message</code> property.</li><li><strong>Conditional Rendering:</strong> We use an <code>if</code> block to check the <code>data.status</code> code. If it's 403, we display a custom "Forbidden" message. For other errors, we can show a generic message or the error message from the backend.</li><li><strong>User Guidance:</strong> The message suggests contacting an administrator, providing a helpful next step for the user.</li></ul><p><strong>2. Using Try...Catch for Specific Cases:</strong></p><p>In some cases, you might want to handle potential authorization errors within a specific component or action. Use a <code>try...catch</code> block to gracefully handle the error and update the UI accordingly.</p><pre><code class="lang-svelte"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"ts"</span>&gt;</span><span class="javascript">
+  <span class="hljs-keyword">import</span> { invalidateAll } <span class="hljs-keyword">from</span> <span class="hljs-string">'$app/navigation'</span>;
+
+  <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">deletePost</span>(<span class="hljs-params">postId: string</span>) </span>{
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/api/posts/<span class="hljs-subst">${postId}</span>`</span>, { <span class="hljs-attr">method</span>: <span class="hljs-string">'DELETE'</span> });
+
+      <span class="hljs-keyword">if</span> (!response.ok) {
+        <span class="hljs-keyword">if</span> (response.status === <span class="hljs-number">403</span>) {
+          <span class="hljs-comment">// User is not authorized</span>
+          alert(<span class="hljs-string">'You do not have permission to delete this post.'</span>);
+          <span class="hljs-keyword">return</span>; <span class="hljs-comment">// Stop further processing</span>
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-comment">// Other error occurred</span>
+          <span class="hljs-keyword">const</span> errorData = <span class="hljs-keyword">await</span> response.json();
+          alert(<span class="hljs-string">`Error deleting post: <span class="hljs-subst">${errorData.message}</span>`</span>);
+          <span class="hljs-keyword">return</span>;
+        }
+      }
+
+      <span class="hljs-comment">// Post deleted successfully</span>
+      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Post deleted!'</span>);
+      invalidateAll(); <span class="hljs-comment">// Re-fetch data to update the UI</span>
+    } <span class="hljs-keyword">catch</span> (error) {
+      <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error during deletion:'</span>, error);
+      alert(<span class="hljs-string">'An unexpected error occurred during deletion.'</span>);
+    }
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">on:click</span>=<span class="hljs-string">{()</span> =&gt;</span> deletePost('some-post-id')}&gt;Delete Post<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre><p><strong>Explanation:</strong></p><ul><li><strong><code>fetch</code>:</strong> We make a <code>fetch</code> request to the <code>/api/posts/[id]</code> endpoint.</li><li><strong><code>response.ok</code>:</strong> We check if the response was successful (status code 2xx).</li><li><strong><code>response.status === 403</code>:</strong> If the status code is 403, we display a specific alert message informing the user about the authorization failure.</li><li><strong><code>invalidateAll()</code>:</strong> This ensures that any data related to the deleted post is refreshed in the UI.</li></ul><p><strong>3. Using Stores and a Global Error State (Advanced)</strong></p><p>For a more sophisticated approach, you can use Svelte stores to manage a global error state. This allows you to display error messages consistently across your application.</p><pre><code class="lang-typescript"><span class="hljs-comment">// src/lib/stores/error.ts</span>
+<span class="hljs-keyword">import</span> { writable } <span class="hljs-keyword">from</span> <span class="hljs-string">'svelte/store'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> errorState = writable({
+  <span class="hljs-attr">message</span>: <span class="hljs-string">''</span>,
+  <span class="hljs-attr">status</span>: <span class="hljs-literal">null</span> <span class="hljs-keyword">as</span> number | <span class="hljs-literal">null</span>,
+});
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setError</span>(<span class="hljs-params">status: number, message: string</span>) </span>{
+  errorState.set({ status, message });
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clearError</span>() </span>{
+  errorState.set({ <span class="hljs-attr">message</span>: <span class="hljs-string">''</span>, <span class="hljs-attr">status</span>: <span class="hljs-literal">null</span> });
+}
+</code></pre><p>Then, in your <code>+layout.svelte</code> (or another suitable layout component):</p><pre><code class="lang-svelte"><span class="hljs-comment">&lt;!-- src/routes/+layout.svelte --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"ts"</span>&gt;</span><span class="javascript">
+  <span class="hljs-keyword">import</span> { errorState, clearError } <span class="hljs-keyword">from</span> <span class="hljs-string">'$lib/stores/error'</span>;
+  <span class="hljs-keyword">import</span> { onMount } <span class="hljs-keyword">from</span> <span class="hljs-string">'svelte'</span>;
+
+  <span class="hljs-keyword">let</span> errorMessage = <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">let</span> errorStatus = <span class="hljs-literal">null</span>;
+
+  $: {
+    errorMessage = $errorState.message;
+    errorStatus = $errorState.status;
+  }
+
+  onMount(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> clearError(); <span class="hljs-comment">// Clear error on component unmount</span>
+  });
+
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">slot</span> /&gt;</span>
+
+{#if errorMessage}
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"error-banner"</span>&gt;</span>
+    {errorMessage} (Status: {errorStatus})
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">on:click</span>=<span class="hljs-string">{clearError}</span>&gt;</span>Dismiss<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+{/if}
+
+<span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="css">
+  <span class="hljs-selector-class">.error-banner</span> {
+    <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#f8d7da</span>;
+    <span class="hljs-attribute">color</span>: <span class="hljs-number">#721c24</span>;
+    <span class="hljs-attribute">padding</span>: <span class="hljs-number">10px</span>;
+    <span class="hljs-attribute">margin-bottom</span>: <span class="hljs-number">10px</span>;
+    <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-number">#f5c6cb</span>;
+    <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">4px</span>;
+    <span class="hljs-attribute">text-align</span>: center;
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+</code></pre><p>And, in your API routes:</p><pre><code class="lang-typescript"><span class="hljs-comment">// src/routes/api/posts/[id]/+server.ts</span>
+<span class="hljs-keyword">import</span> { json, error } <span class="hljs-keyword">from</span> <span class="hljs-string">'@sveltejs/kit'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">DELETE</span>(<span class="hljs-params">{ params }</span>) </span>{
+    <span class="hljs-comment">// ... authorization checks ...</span>
+    <span class="hljs-keyword">if</span> (userRole !== <span class="hljs-string">'admin'</span>) {
+        <span class="hljs-keyword">throw</span> error(<span class="hljs-number">403</span>, <span class="hljs-string">'You are not authorized to delete this post.'</span>);
+    }
+}
+</code></pre><p><strong>Key Takeaways</strong></p><ul><li><strong>Secure Your Backend:</strong> Authorization must be enforced on the server-side.</li><li><strong>Use HTTP Status Codes:</strong> Utilize 403 Forbidden for authorization failures.</li><li><strong>Provide Informative Error Messages:</strong> Don't just show a generic error page. Tell the user <em>why</em> they're seeing the error and what they can do about it.</li><li><strong>Consistent Error Handling:</strong> Implement a unified approach for displaying error messages throughout your application using <code>+error.svelte</code>, <code>try...catch</code>, or stores.</li><li><strong>User Experience Matters:</strong> Guide the user with helpful instructions or links to relevant resources.</li></ul><p>By following these best practices, you can create a more secure and user-friendly SvelteKit application that gracefully handles authorization errors. Happy coding!</p><p> </p><p><strong>Related Posts</strong></p><p><a href="https://monooa.github.io/dev/sveltekit-files/debugging-errors-related-to-dynamic-routes-sveltekit.html"> Debugging errors related to dynamic routes( SvelteKit ).</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/dealing-with-authorization-errors-and-displaying-appropriate-messages-sveltekit.html"> </a><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=en#INTERNAL_LINK#/post/null">Dealing with authorization errors and displaying appropriate messages( SvelteKit ).</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/fixing-issues-with-server-side-redirects-sveltekit.html">Fixing issues with server-side redirects( SvelteKit ).</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/preventing-and-handling-race-conditions-in-load-functions-sveltekit.html">Preventing and handling race conditions in load functions( SvelteKit ).</a></p><p><a href="https://draft.blogger.com/blog/post/edit/2785427840195552901/1204659724142566482?hl=enhttps://monooa.github.io/dev/sveltekit-files/debugging-errors-related-to-route-parameters-sveltekit.html">Debugging errors related to route parameters( SvelteKit ).</a></p><p> </p></div><footer class="content__footer"><div class="entry-wrapper"><p class="content__updated">[MISSING TRANSLATION] March 27, 2025</p><div class="content__actions"><div class="content__share"><button class="btn--icon content__share-button js-content__share-button"><svg width="20" height="20" aria-hidden="true"><use xlink:href="https://monooa.github.io/dev/sveltekit-files/assets/svg/svg-map.svg#share"></use></svg> <span>[MISSING TRANSLATION]</span></button><div class="content__share-popup js-content__share-popup"></div></div></div><div class="content__bio bio"><div><h3 class="h4 bio__name"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" rel="author">aymen guendez</a></h3></div></div></div><nav class="content__nav"><div class="wrapper"><div class="content__nav-inner"><div class="content__nav-prev"><a href="https://monooa.github.io/dev/sveltekit-files/handling-authentication-errors-and-redirecting-to-login-pages-sveltekit.html" class="content__nav-link" rel="prev"><div><span>[MISSING TRANSLATION]</span> Handling authentication errors and redirecting to login pages( SvelteKit ).</div></a></div><div class="content__nav-next"><a href="https://monooa.github.io/dev/sveltekit-files/debugging-errors-related-to-dynamic-routes-sveltekit.html" class="content__nav-link" rel="next"><div><span>[MISSING TRANSLATION]</span> Debugging errors related to dynamic routes( SvelteKit ).</div></a></div></div></div></nav></footer></article><div class="content__related related"><div class="wrapper"><h2 class="h4 related__title">[MISSING TRANSLATION]</h2><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:15" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/understanding-and-fixing-referenceerror-window-is-not-defined-errors.html">Understanding and fixing &quot;ReferenceError: window is not defined&quot; errors.</a></h3></header><p>Ah, the dreaded "ReferenceError: window is not defined" error. If you're a JavaScript developer dabbling in server-side rendering (SSR), Node.js, or modern JavaScript frameworks like React, Next.js, or Vue, you've likely encountered this beast. It can appear seemingly out of nowhere, leaving you scratching your&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/understanding-and-fixing-referenceerror-window-is-not-defined-errors.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:06" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/using-browser-developer-tools-to-debug-sveltekit-applications.html">Using browser developer tools to debug SvelteKit applications.</a></h3></header><p>SvelteKit is a fantastic framework for building blazing-fast web applications. Its simplicity and power are undeniable, but even the best code can sometimes run into unexpected issues. That's where the trusty browser developer tools come to the rescue! This post will guide you through effectively&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/using-browser-developer-tools-to-debug-sveltekit-applications.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article><article class="feed__item feed__item--centered"><div class="feed__content"><header><div class="feed__meta"><a href="https://monooa.github.io/dev/sveltekit-files/authors/aymen-guendez/" class="feed__author">aymen guendez</a> <time datetime="2025-03-27T12:00" class="feed__date">March 27, 2025</time></div><h3 class="feed__title"><a href="https://monooa.github.io/dev/sveltekit-files/common-causes-of-hydration-errors-and-how-to-fix-them.html">Common causes of hydration errors and how to fix them.</a></h3></header><p>Ah, the dreaded hydration error. As a React developer, you've probably encountered it at some point. That cryptic message in your console, warning you about inconsistencies between server-rendered and client-rendered output, can be a real headache. But fear not! While frustrating, hydration errors are often&hellip;</p><a href="https://monooa.github.io/dev/sveltekit-files/common-causes-of-hydration-errors-and-how-to-fix-them.html" class="readmore feed__readmore">[MISSING TRANSLATION]</a></div></article></div></div></main><footer class="footer footer--glued"><div class="wrapper"><div class="footer__copyright"><p>Powered by Publii</p></div><button id="backToTop" class="footer__bttop" aria-label="[MISSING TRANSLATION]" title="[MISSING TRANSLATION]"><svg width="20" height="20"><use xlink:href="https://monooa.github.io/dev/sveltekit-files/assets/svg/svg-map.svg#toparrow"/></svg></button></div></footer><script defer="defer" src="https://monooa.github.io/dev/sveltekit-files/assets/js/scripts.min.js?v=700105c316933a8202041b6415abb233"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'sidebar',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:true,relatedContainerForOverlayMenuSelector:'.top'};</script><script>var images = document.querySelectorAll('img[loading]');
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].complete) {
+                images[i].classList.add('is-loaded');
+            } else {
+                images[i].addEventListener('load', function () {
+                    this.classList.add('is-loaded');
+                }, false);
+            }
+        }</script></body></html>
